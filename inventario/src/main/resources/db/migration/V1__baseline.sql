@@ -1,0 +1,3 @@
+-- Baseline del esquema SoftFruver.
+-- La BD ya tiene tablas, triggers y funciones.
+-- A partir de ahora, todos los cambios irán en V2, V3, etc.

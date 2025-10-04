@@ -8,11 +8,13 @@ public class AuthController {
 
     @GetMapping("/login")
     public String login() {
+        // usa templates/login.html (ya existe)
         return "login";
     }
 
+    // Raíz -> redirige al menú (el handler real de /menu está en MenuController)
     @GetMapping("/")
-    public String home() {
-        return "index";
+    public String root() {
+        return "redirect:/menu";
     }
 }

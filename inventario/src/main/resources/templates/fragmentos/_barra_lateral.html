@@ -1,0 +1,68 @@
+<th:block th:fragment="barra_lateral">
+  <nav class="bg-white border rounded-2xl p-3 sticky top-4">
+    <ul class="space-y-1 text-sm">
+      <li>
+        <a href="/menu" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/menu')} ? 'active' : ''">
+          Menú
+        </a>
+      </li>
+
+      <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
+        <a href="/compras" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/compras')} ? ' bg-gray-100 font-medium'">
+          Compras
+        </a>
+      </li>
+
+      <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
+        <a href="/ventas" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/ventas')} ? ' bg-gray-100 font-medium'">
+          Ventas
+        </a>
+      </li>
+
+      <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
+        <a href="/pagos" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/pagos')} ? ' bg-gray-100 font-medium'">
+          Pagos
+        </a>
+      </li>
+
+      <li>
+        <a href="/inventario" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/inventario')} ? ' bg-gray-100 font-medium'">
+          Inventario
+        </a>
+      </li>
+
+      <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
+        <a href="/reportes" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/reportes')} ? ' bg-gray-100 font-medium'">
+          Reportes
+        </a>
+      </li>
+
+      <li sec:authorize="hasRole('ADMIN')">
+        <a href="/proveedores" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/proveedores')} ? ' bg-gray-100 font-medium'">
+          Proveedores
+        </a>
+      </li>
+
+      <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
+        <a href="/clientes" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/clientes')} ? ' bg-gray-100 font-medium'">
+          Clientes
+        </a>
+      </li>
+
+      <li sec:authorize="hasRole('ADMIN')">
+        <a href="/config" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/config')} ? ' bg-gray-100 font-medium'">
+          Configuración
+        </a>
+      </li>
+    </ul>
+  </nav>
+</th:block>

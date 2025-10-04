@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{diseño/base}">
+<head>
+  <title>Menú</title>
+</head>
+<body>
+  <section layout:fragment="contenido" class="space-y-8">
+
+    <!-- Resumen del día (visible a ambos roles) -->
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold text-gray-900">Resumen del día</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white rounded-2xl p-4 border text-center shadow-sm">
+          <h3 class="text-gray-700 font-medium mb-1">Ventas</h3>
+          <p class="text-2xl font-bold text-indigo-600">0</p>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border text-center shadow-sm">
+          <h3 class="text-gray-700 font-medium mb-1">Compras</h3>
+          <p class="text-2xl font-bold text-indigo-600">0</p>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border text-center shadow-sm">
+          <h3 class="text-gray-700 font-medium mb-1">Pagos</h3>
+          <p class="text-2xl font-bold text-indigo-600">0</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Acciones disponibles según rol (UNA SOLA SECCIÓN) -->
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold text-gray-900">Acciones disponibles</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+
+        <!-- ====== Acciones comunes (ambos roles) ====== -->
+        <a th:href="@{/ventas}" class="bg-white rounded-2xl p-4 border shadow-sm hover:shadow transition">
+          <h3 class="font-medium text-gray-900 mb-1">Registrar venta</h3>
+          <p class="text-sm text-gray-600">Crear y consultar ventas del día.</p>
+        </a>
+
+        <a th:href="@{/compras}" class="bg-white rounded-2xl p-4 border shadow-sm hover:shadow transition">
+          <h3 class="font-medium text-gray-900 mb-1">Registrar compra</h3>
+          <p class="text-sm text-gray-600">Ingresar compras y actualizar inventario.</p>
+        </a>
+
+        <a th:href="@{/pagos}" class="bg-white rounded-2xl p-4 border shadow-sm hover:shadow transition">
+          <h3 class="font-medium text-gray-900 mb-1">Registrar pago</h3>
+          <p class="text-sm text-gray-600">Pagos a proveedores o de clientes.</p>
+        </a>
+
+        <a th:href="@{/inventario}" class="bg-white rounded-2xl p-4 border shadow-sm hover:shadow transition">
+          <h3 class="font-medium text-gray-900 mb-1">Inventario</h3>
+          <p class="text-sm text-gray-600">Ver stock y alertas de bajo inventario.</p>
+        </a>
+
+        <a th:href="@{/reportes}" class="bg-white rounded-2xl p-4 border shadow-sm hover:shadow transition">
+          <h3 class="font-medium text-gray-900 mb-1">Reportes</h3>
+          <p class="text-sm text-gray-600">Compras y ventas por rango de fechas.</p>
+        </a>
+
+        <!-- ====== Acciones solo ADMIN ====== -->
+        <a sec:authorize="hasRole('ADMIN')"
+           th:href="@{/proveedores}" class="bg-white rounded-2xl p-4 border shadow-sm hover:shadow transition">
+          <h3 class="font-medium text-gray-900 mb-1">Gestionar proveedores</h3>
+          <p class="text-sm text-gray-600">Registrar y eliminar proveedores.</p>
+        </a>
+
+        <a sec:authorize="hasRole('ADMIN')"
+           th:href="@{/clientes}" class="bg-white rounded-2xl p-4 border shadow-sm hover:shadow transition">
+          <h3 class="font-medium text-gray-900 mb-1">Gestionar clientes</h3>
+          <p class="text-sm text-gray-600">Registrar y eliminar clientes.</p>
+        </a>
+
+        <a sec:authorize="hasRole('ADMIN')"
+           th:href="@{/configuracion}" class="bg-white rounded-2xl p-4 border shadow-sm hover:shadow transition">
+          <h3 class="font-medium text-gray-900 mb-1">Configuración</h3>
+          <p class="text-sm text-gray-600">Usuarios, contraseñas y seguridad.</p>
+        </a>
+
+        <a sec:authorize="hasRole('ADMIN')"
+           th:href="@{/auditoria}" class="bg-white rounded-2xl p-4 border shadow-sm hover:shadow transition">
+          <h3 class="font-medium text-gray-900 mb-1">Auditoría</h3>
+          <p class="text-sm text-gray-600">Historial de cambios críticos.</p>
+        </a>
+
+        <!-- ====== Acciones solo SECRETARÍA ====== -->
+        <a sec:authorize="hasRole('SECRETARIA')"
+           th:href="@{/ventas/modificar}" class="bg-white rounded-2xl p-4 border shadow-sm hover:shadow transition">
+          <h3 class="font-medium text-gray-900 mb-1">Modificar ventas</h3>
+          <p class="text-sm text-gray-600">Editar ventas por fecha/cliente.</p>
+        </a>
+
+        <a sec:authorize="hasRole('SECRETARIA')"
+           th:href="@{/compras/modificar}" class="bg-white rounded-2xl p-4 border shadow-sm hover:shadow transition">
+          <h3 class="font-medium text-gray-900 mb-1">Modificar compras</h3>
+          <p class="text-sm text-gray-600">Editar compras por fecha/proveedor.</p>
+        </a>
+
+        <a sec:authorize="hasRole('SECRETARIA')"
+           th:href="@{/pagos/modificar}" class="bg-white rounded-2xl p-4 border shadow-sm hover:shadow transition">
+          <h3 class="font-medium text-gray-900 mb-1">Modificar pagos</h3>
+          <p class="text-sm text-gray-600">Editar pagos de clientes y proveedores.</p>
+        </a>
+
+        <!-- ====== Acciones peligrosas (solo ADMIN) ====== -->
+        <a sec:authorize="hasRole('ADMIN')"
+           th:href="@{/ventas/eliminar}" class="bg-white rounded-2xl p-4 border shadow-sm hover:shadow transition">
+          <h3 class="font-medium text-red-600 mb-1">Eliminar ventas</h3>
+          <p class="text-sm text-gray-600">Acción restringida para administrador.</p>
+        </a>
+
+        <a sec:authorize="hasRole('ADMIN')"
+           th:href="@{/compras/eliminar}" class="bg-white rounded-2xl p-4 border shadow-sm hover:shadow transition">
+          <h3 class="text-gray-900 font-medium mb-1 text-red-600">Eliminar compras</h3>
+          <p class="text-sm text-gray-600">Acción restringida para administrador.</p>
+        </a>
+
+        <a sec:authorize="hasRole('ADMIN')"
+           th:href="@{/pagos/eliminar}" class="bg-white rounded-2xl p-4 border shadow-sm hover:shadow transition">
+          <h3 class="text-gray-900 font-medium mb-1 text-red-600">Eliminar pagos</h3>
+          <p class="text-sm text-gray-600">Acción restringida para administrador.</p>
+        </a>
+
+      </div>
+    </section>
+
+  </section>
+</body>
+</html>
+

@@ -1,0 +1,17 @@
+<th:block th:fragment="barra_superior">
+  <div class="bg-white border-b">
+    <div class="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="/imagenes/logo.svg" alt="SoftFruver" class="h-6 w-6" />
+        <span class="text-lg font-semibold text-gray-900">SoftFruver</span>
+      </div>
+
+      <div class="text-sm text-gray-600">
+        <span>Usuario: </span><span class="font-medium" sec:authentication="name"></span>
+        <span class="mx-2">·</span>
+        <span>Rol: </span><span class="font-medium" sec:authentication="principal.authorities"></span>
+        <a href="/logout" class="ml-4 text-indigo-600 hover:underline">Salir</a>
+      </div>
+    </div>
+  </div>
+</th:block>
