@@ -1,51 +1,41 @@
 <!doctype html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::section}, 'SoftFruver — Iniciar sesión')}">
+<section class="min-h-dvh bg-gray-50 flex items-center justify-center p-4">
+  <div class="w-full max-w-sm">
+    <div class="card p-6">
+      <h1 class="text-2xl font-semibold text-gray-900 mb-1">Iniciar sesión</h1>
+      <p class="text-sm text-muted mb-6">Ingresa con tu usuario de SoftFruver.</p>
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SoftFruver — Iniciar sesión</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-
-<body class="min-h-dvh bg-gray-50">
-  <div class="flex items-center justify-center min-h-dvh p-4">
-    <div class="w-full max-w-sm">
-      <div class="bg-white shadow rounded-2xl p-6">
-        <h1 class="text-2xl font-semibold text-gray-900 mb-1">Iniciar sesión</h1>
-        <p class="text-sm text-gray-500 mb-6">Ingresa con tu usuario de SoftFruver.</p>
-
-        <div th:if="${param.error}" class="mb-4 rounded-lg bg-red-50 text-red-700 px-3 py-2 text-sm">
-          Usuario o contraseña inválidos.
-        </div>
-        <div th:if="${param.logout}" class="mb-4 rounded-lg bg-green-50 text-green-700 px-3 py-2 text-sm">
-          Sesión cerrada correctamente.
-        </div>
-
-        <form th:action="@{/login}" method="post" class="space-y-4">
-          <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1" for="username">Usuario</label>
-            <input id="username" name="username" type="text" required
-              class="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1" for="password">Contraseña</label>
-            <input id="password" name="password" type="password" required
-              class="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-          </div>
-
-          <button type="submit"
-            class="w-full rounded-xl bg-indigo-600 text-white font-medium py-2.5 hover:bg-indigo-700 transition">
-            Entrar
-          </button>
-        </form>
+      <div th:if="${param.error}" class="mb-4 rounded-lg bg-red-50 text-red-700 px-3 py-2 text-sm">
+        Usuario o contraseña inválidos.
       </div>
-      <p class="text-center text-xs text-gray-400 mt-4">SoftFruver · v0</p>
-    </div>
-  </div>
-</body>
+      <div th:if="${param.logout}" class="mb-4 rounded-lg bg-green-50 text-green-700 px-3 py-2 text-sm">
+        Sesión cerrada correctamente.
+      </div>
 
+      <form th:action="@{/login}" method="post" class="space-y-4">
+        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1" for="username">Usuario</label>
+          <input id="username" name="username" type="text" required
+            class="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1" for="password">Contraseña</label>
+          <input id="password" name="password" type="password" required
+            class="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+
+        <button type="submit"
+          class="w-full rounded-xl bg-indigo-600 text-white font-medium py-2.5 hover:bg-indigo-700 transition">
+          Entrar
+        </button>
+      </form>
+    </div>
+    <p class="text-center text-xs text-muted mt-4">SoftFruver · v0</p>
+  </div>
+</section>
 </html>

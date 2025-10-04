@@ -1,12 +1,13 @@
 <!doctype html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content, pageTitle='SoftFruver', bodyClass='')">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title th:text="${pageTitle} ?: 'SoftFruver'"></title>
+  <link rel="stylesheet" th:href="@{/css/main.css}" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-dvh bg-gray-50">
-  <main th:replace="~{::body}"></main>
+<body class="min-h-dvh bg-gray-50" th:classappend="' ' + ${bodyClass}">
+  <main class="app-shell" th:replace="${content}"></main>
 </body>
 </html>
