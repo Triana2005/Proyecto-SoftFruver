@@ -1,49 +1,50 @@
 <!doctype html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
-
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SoftFruver — Iniciar sesión</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión | SoftFruver</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="/css/app.css" />
 </head>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center">
 
-<body class="min-h-dvh bg-gray-50">
-  <div class="flex items-center justify-center min-h-dvh p-4">
-    <div class="w-full max-w-sm">
-      <div class="bg-white shadow rounded-2xl p-6">
-        <h1 class="text-2xl font-semibold text-gray-900 mb-1">Iniciar sesión</h1>
-        <p class="text-sm text-gray-500 mb-6">Ingresa con tu usuario de SoftFruver.</p>
+  <main class="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm border border-gray-200">
+    <h1 class="text-2xl font-semibold text-center text-gray-800 mb-6">SoftFruver</h1>
 
-        <div th:if="${param.error}" class="mb-4 rounded-lg bg-red-50 text-red-700 px-3 py-2 text-sm">
-          Usuario o contraseña inválidos.
-        </div>
-        <div th:if="${param.logout}" class="mb-4 rounded-lg bg-green-50 text-green-700 px-3 py-2 text-sm">
-          Sesión cerrada correctamente.
-        </div>
-
-        <form th:action="@{/login}" method="post" class="space-y-4">
-          <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1" for="username">Usuario</label>
-            <input id="username" name="username" type="text" required
-              class="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1" for="password">Contraseña</label>
-            <input id="password" name="password" type="password" required
-              class="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-          </div>
-          <button type="submit"
-            class="w-full rounded-xl bg-indigo-600 text-white font-medium py-2.5 hover:bg-indigo-700 transition">
-            Entrar
-          </button>
-        </form>
-      </div>
-      <p class="text-center text-xs text-gray-400 mt-4">SoftFruver · v0</p>
+    <!-- Mensajes de error / logout -->
+    <div th:if="${param.error}" class="mb-4 text-sm text-red-600 text-center">
+      Usuario o contraseña incorrectos.
     </div>
-  </div>
-</body>
+    <div th:if="${param.logout}" class="mb-4 text-sm text-green-600 text-center">
+      Sesión cerrada correctamente.
+    </div>
 
+    <!-- Formulario de login -->
+    <form th:action="@{/login}" method="post" class="space-y-4">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+      <div>
+        <label for="username" class="block text-sm font-medium text-gray-700">Usuario</label>
+        <input type="text" id="username" name="username" required autofocus
+               class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+        <input type="password" id="password" name="password" required
+               class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+
+      <button type="submit"
+              class="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg px-4 py-2 text-sm font-medium transition">
+        Ingresar
+      </button>
+    </form>
+
+    <p class="mt-6 text-center text-xs text-gray-500">
+      © <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}"></span> SoftFruver. Todos los derechos reservados.
+    </p>
+  </main>
+
+</body>
 </html>
