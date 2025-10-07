@@ -25,7 +25,7 @@ public class Proveedor {
   @Column(name = "actualizado_en")
   private OffsetDateTime actualizadoEn;
 
-  // ===== Getters/Setters =====
+  
   public Long getId() { return id; }
   public void setId(Long id) { this.id = id; }
 

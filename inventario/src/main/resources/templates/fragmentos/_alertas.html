@@ -1,12 +1,14 @@
 <th:block th:fragment="alertas">
-  <div th:if="${ok}"   class="mb-4 rounded-lg bg-green-50  text-green-700  px-3 py-2 text-sm">
+  <div th:if="${ok}" class="sf-alert sf-alert-success mb-4">
     <span th:switch="${ok}">
-      <span th:case="'creado'">Cliente creado correctamente.</span>
-      <span th:case="'archivado'">Cliente archivado.</span>
-      <span th:case="'restaurado'">Cliente restaurado.</span>
+      <span th:case="'creado'">Creado correctamente.</span>
+      <span th:case="'archivado'">Archivado correctamente.</span>
+      <span th:case="'restaurado'">Restaurado correctamente.</span>
       <span th:case="*">Operación exitosa.</span>
     </span>
   </div>
-  <div th:if="${err}"  class="mb-4 rounded-lg bg-red-50    text-red-700    px-3 py-2 text-sm" th:text="${err}">Ocurrió un error.</div>
-  <div th:if="${warn}" class="mb-4 rounded-lg bg-yellow-50 text-yellow-800 px-3 py-2 text-sm" th:text="${warn}">Atención requerida.</div>
+
+  <div th:if="${err}" class="sf-alert sf-alert-danger mb-4" th:text="${err}">Ocurrió un error.</div>
+
+  <div th:if="${warn}" class="sf-alert sf-alert-warn mb-4" th:text="${warn}">Atención requerida.</div>
 </th:block>

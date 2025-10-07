@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{diseño/base}">
+<head>
+  <title>Editar cliente</title>
+</head>
+<body>
+<section layout:fragment="contenido" class="space-y-6">
+
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-semibold text-gray-900">Editar cliente</h1>
+    <a th:href="@{/clientes}" class="sf-btn sf-btn-ghost">Volver</a>
+  </div>
+
+  <div th:if="${ok}"  class="sf-alert sf-alert-success" th:text="${ok}">ok</div>
+  <div th:if="${err}" class="sf-alert sf-alert-danger"  th:text="${err}">err</div>
+
+  <div class="sf-card space-y-4">
+    <form th:action="@{|/clientes/${cliente.id}/actualizar|}" method="post" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Nombre</label>
+        <input type="text" name="nombre" required minlength="2"
+               th:value="${cliente.nombre}"
+               class="sf-input">
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Teléfono</label>
+        <input type="text" name="telefono"
+               th:value="${cliente.telefono}"
+               class="sf-input">
+      </div>
+      <div class="flex items-end gap-2">
+        <button class="sf-btn sf-btn-primary">Guardar cambios</button>
+        <a th:href="@{/clientes}" class="sf-btn sf-btn-ghost">Cancelar</a>
+      </div>
+    </form>
+  </div>
+
+</section>
+</body>
+</html>

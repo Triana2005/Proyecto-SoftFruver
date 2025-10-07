@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{diseño/base}">
+<head>
+  <title>Configuración</title>
+</head>
+<body>
+<section layout:fragment="contenido" class="space-y-6">
+
+  <h1 class="text-2xl font-semibold text-gray-900">Configuración (solo Admin)</h1>
+
+  <!-- Alertas -->
+  <div th:if="${ok}"  class="sf-alert sf-alert-success" th:text="${ok}">ok</div>
+  <div th:if="${err}" class="sf-alert sf-alert-danger"  th:text="${err}">err</div>
+
+  <!-- Crear secretaria -->
+  <div class="sf-card p-4 space-y-3">
+    <h2 class="text-lg font-medium">Añadir secretaria</h2>
+
+    <form th:action="@{/config/usuarios/crear-secretaria}" method="post"
+          class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Usuario</label>
+        <input type="text" name="username" required minlength="3" class="sf-input w-full">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Contraseña</label>
+        <input type="password" name="password" required minlength="6" class="sf-input w-full">
+      </div>
+
+      <div class="flex items-end">
+        <button class="sf-btn sf-btn-primary">Crear secretaria</button>
+      </div>
+    </form>
+
+    <p class="text-xs text-gray-500">
+      El rol siempre será <strong>SECRETARIA</strong>. No se permite crear otro ADMIN.
+    </p>
+  </div>
+
+  <!-- Cambiar mi contraseña -->
+  <div class="sf-card p-4 space-y-3">
+    <h2 class="text-lg font-medium">Cambiar mi contraseña</h2>
+
+    <form th:action="@{/config/mi-password}" method="post"
+          class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Nueva contraseña</label>
+        <input type="password" name="nuevaPassword" required minlength="6" class="sf-input w-full">
+      </div>
+
+      <div class="md:col-span-2 flex items-end">
+        <button class="sf-btn sf-btn-primary">Actualizar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Listado de usuarios -->
+  <div class="sf-card p-4 space-y-3">
+    <h2 class="text-lg font-medium">Usuarios</h2>
+
+    <div class="overflow-x-auto">
+      <table class="sf-table min-w-full text-sm">
+        <thead>
+        <tr>
+          <th class="px-3 py-2 text-left">Usuario</th>
+          <th class="px-3 py-2 text-left">Rol</th>
+          <th class="px-3 py-2 text-left">Estado</th>
+          <th class="px-3 py-2 text-right w-[320px]">Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${usuarios}" class="border-t">
+          <td class="px-3 py-2" th:text="${u.username}">usuario</td>
+          <td class="px-3 py-2" th:text="${u.rol}">ROL</td>
+          <td class="px-3 py-2" th:text="${u.activo} ? 'Activo' : 'Inactivo'">Activo</td>
+          <td class="px-3 py-2">
+            <div class="flex items-center gap-2 justify-end">
+
+              <!-- Modificar (página) -->
+              <a th:href="@{|/config/usuarios/${u.id}/editar|}" class="sf-btn sf-btn-light text-xs">
+                Modificar
+              </a>
+
+              <!-- Activar/Desactivar (solo SECRETARIA) -->
+              <form th:if="${u.rol.name() == 'SECRETARIA' and u.activo}"
+                    th:action="@{|/config/usuarios/${u.id}/desactivar|}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="sf-btn sf-btn-warn text-xs">Desactivar</button>
+              </form>
+
+              <form th:if="${u.rol.name() == 'SECRETARIA' and !u.activo}"
+                    th:action="@{|/config/usuarios/${u.id}/activar|}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="sf-btn sf-btn-success text-xs">Activar</button>
+              </form>
+
+              <!-- Borrar (solo SECRETARIA) -->
+              <form th:if="${u.rol.name() == 'SECRETARIA'}"
+                    th:action="@{|/config/usuarios/${u.id}/borrar|}" method="post"
+                    onsubmit="return confirm('¿Seguro que quieres eliminar definitivamente este usuario?');">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="sf-btn sf-btn-danger text-xs">Eliminar</button>
+              </form>
+
+            </div>
+          </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(usuarios)}">
+          <td colspan="4" class="px-3 py-8 text-center text-gray-500">Sin usuarios.</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-xs text-gray-500">
+      No se puede activar/desactivar ni borrar al ADMIN. “Eliminar” es irreversible.
+    </p>
+  </div>
+
+</section>
+</body>
+</html>

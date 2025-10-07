@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import java.util.Objects;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -94,4 +95,35 @@ buscarPorEstado(boolean archivados, String q, Pageable pageable) {
       ? repo.buscarArchivadosPage(term, pageable)
       : repo.buscarActivosPage(term, pageable);
 }
+
+public Cliente getById(Long id) {
+  return repo.findById(id)
+      .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado."));
+}
+
+public void actualizar(Long id, String nombre, String telefono) {
+  if (nombre == null || nombre.isBlank()) {
+    throw new IllegalArgumentException("El nombre es obligatorio.");
+  }
+  String nombreLimpio = nombre.trim();
+  String tel = (telefono == null ? null : telefono.trim());
+
+  var c = getById(id);
+
+  boolean cambioNombre = !c.getNombre().equalsIgnoreCase(nombreLimpio);
+  boolean cambioTel = !Objects.equals(
+      c.getTelefono() == null ? null : c.getTelefono().trim(),
+      tel == null ? null : (tel.isBlank() ? null : tel)
+  );
+
+  if (!cambioNombre && !cambioTel) return; // nada que cambiar
+
+  c.setNombre(nombreLimpio);
+  c.setTelefono((tel != null && tel.isBlank()) ? null : tel);
+
+  // Si choca el único parcial (nombre activo), saltará DataIntegrityViolationException
+  repo.save(c);
+}
+
+
 }

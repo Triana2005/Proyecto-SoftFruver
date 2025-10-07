@@ -25,7 +25,7 @@ public class Cliente {
   @Column(name = "actualizado_en", nullable = false)
   private OffsetDateTime actualizadoEn;
 
-  // --- getters & setters ---
+  
 
   public Long getId() { return id; }
   public void setId(Long id) { this.id = id; }

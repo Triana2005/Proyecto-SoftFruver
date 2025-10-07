@@ -1,0 +1,150 @@
+/* =========================
+   SoftFruver – Design Tokens
+   ========================= */
+:root{
+  --brand-50:#f4f7ff;
+  --brand-100:#e8eeff;
+  --brand-200:#cfdcff;
+  --brand-300:#a8c0ff;
+  --brand-400:#7ea1ff;
+  --brand-500:#556dff;    /* color principal (botones primarios) */
+  --brand-600:#3f53d6;
+  --brand-700:#2f3da6;
+
+  --gray-50:#f9fafb;
+  --gray-100:#f3f4f6;
+  --gray-200:#e5e7eb;
+  --gray-300:#d1d5db;
+  --gray-400:#9ca3af;
+  --gray-500:#6b7280;
+  --gray-600:#4b5563;
+  --gray-700:#374151;
+  --gray-800:#1f2937;
+  --gray-900:#111827;
+
+  --success-50:#ecfdf5;
+  --success-200:#a7f3d0;
+  --success-600:#059669;
+
+  --danger-50:#fef2f2;
+  --danger-200:#fecaca;
+  --danger-600:#dc2626;
+
+  --radius-xl: 0.75rem;      /* ~rounded-xl */
+  --radius-2xl: 1rem;        /* ~rounded-2xl */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.06);
+  --shadow-md: 0 6px 20px rgba(17,24,39,.06);
+
+  --ring: 0 0 0 .25rem rgba(85, 109, 255, .25); /* focus */
+}
+
+/* ================ 
+   Resets mínimos
+   ================ */
+* { box-sizing:border-box; }
+html, body { height:100%; }
+body { color: var(--gray-900); background: #f6f7fb; }
+
+/* ======================================
+   Utilidades SoftFruver (prefijo sf-)
+   ====================================== */
+
+/* Tarjetas / contenedores */
+.sf-card{
+  background:#fff;
+  border:1px solid var(--gray-200);
+  border-radius: var(--radius-2xl);
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Botones base */
+.sf-btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:.5rem;
+  border-radius: var(--radius-xl);
+  padding:.5rem .75rem;
+  font-size:.875rem; line-height:1.25rem;
+  border:1px solid var(--gray-200);
+  background:#fff; color:var(--gray-900);
+  transition: box-shadow .15s ease, background .15s ease, border-color .15s ease;
+  text-decoration:none;
+}
+.sf-btn:hover{ background: var(--gray-100); }
+.sf-btn:focus{ outline:none; box-shadow: var(--ring); }
+
+/* Variantes */
+.sf-btn-primary{
+  background: var(--brand-500);
+  color:#fff;
+  border-color: transparent;
+}
+.sf-btn-primary:hover{ background: var(--brand-600); }
+.sf-btn-primary:focus{ box-shadow: 0 0 0 .25rem rgba(85,109,255,.35); }
+
+.sf-btn-ghost{
+  background:#fff;
+  color:var(--gray-900);
+  border-color: var(--gray-300);
+}
+.sf-btn-ghost:hover{ background:#fff; border-color: var(--gray-400); }
+
+/* Acciones pequeñas (tabla) */
+.sf-action{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:.375rem .625rem; font-size:.75rem;
+  border-radius: var(--radius-xl);
+  background:#fff; border:1px solid var(--gray-200);
+}
+.sf-action:hover{ background: var(--gray-100); }
+
+/* Inputs */
+.sf-input{
+  width:100%;
+  border:1px solid var(--gray-300);
+  border-radius: var(--radius-xl);
+  padding:.5rem .75rem;
+  font-size:.875rem;
+  background:#fff;
+}
+.sf-input:focus{ outline:none; box-shadow: var(--ring); border-color: var(--brand-500); }
+
+/* Tabla básica */
+.sf-table thead th{
+  background: var(--gray-50);
+  font-weight:600;
+}
+.sf-table th, .sf-table td{
+  padding:.5rem 1rem;
+  border-top:1px solid var(--gray-200);
+}
+
+/* Alertas */
+.sf-alert{
+  border-radius: var(--radius-xl);
+  padding:.5rem .75rem;
+  font-size:.875rem;
+  border:1px solid;
+}
+.sf-alert-success{
+  background: var(--success-50);
+  border-color: var(--success-200);
+  color: var(--success-600);
+}
+.sf-alert-danger{
+  background: var(--danger-50);
+  border-color: var(--danger-200);
+  color: var(--danger-600);
+}
+
+/* Topbar / Sidebar (si deseas aplicarlas luego) */
+.sf-topbar{
+  background:#fff; border-bottom:1px solid var(--gray-200);
+}
+.sf-sidebar{
+  background:#fff; border:1px solid var(--gray-200);
+  border-radius: var(--radius-2xl);
+}
+
+/* Helpers */
+.sf-spacer{ flex:1 1 auto; }

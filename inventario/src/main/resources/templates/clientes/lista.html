@@ -1,120 +1,119 @@
 <!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="~{diseño/base}">
+      layout:decorate="~{diseño/base}">
 
 <head>
   <title>Clientes</title>
 </head>
 
 <body>
-  <section layout:fragment="contenido" class="space-y-6">
+<section layout:fragment="contenido" class="space-y-6">
 
-    <!-- Encabezado + Crear -->
-    <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-semibold text-gray-900">Clientes</h1>
+  <!-- Encabezado + Crear -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-semibold text-gray-900">Clientes</h1>
 
-      <!-- FORMULARIO DE CREACIÓN SOLO PARA ADMIN -->
-      <form th:action="@{/clientes}" method="post" class="flex items-center gap-2"
-            th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-        <input type="text" name="nombre" placeholder="Nombre"
-               class="rounded-xl border px-3 py-2 text-sm"
-               required>
-        <input type="text" name="telefono" placeholder="Teléfono"
-               class="rounded-xl border px-3 py-2 text-sm">
-        <button type="submit" class="rounded-xl bg-gray-900 text-white px-3 py-2 text-sm hover:bg-gray-800">
-          Registrar
-        </button>
-      </form>
-      <!-- FIN: SOLO ADMIN -->
+    <!-- FORMULARIO DE CREACIÓN SOLO PARA ADMIN -->
+    <form th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+          th:action="@{/clientes}" method="post" class="flex items-center gap-2">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+      <input type="text" name="nombre" placeholder="Nombre" class="sf-input w-44" required>
+      <input type="text" name="telefono" placeholder="Teléfono" class="sf-input w-44">
+      <button type="submit" class="sf-btn sf-btn-primary">Registrar</button>
+    </form>
+    <!-- FIN: SOLO ADMIN -->
+  </div>
 
+  <!-- Filtros -->
+  <div class="flex items-center gap-3">
+    <form th:action="@{/clientes}" method="get" class="flex items-center gap-2">
+      <input type="hidden" name="estado" th:value="${estado}">
+      <input type="text" name="q" th:value="${q}" placeholder="Buscar por nombre o teléfono" class="sf-input w-72">
+      <button class="sf-btn sf-btn-ghost">Buscar</button>
+      <!-- Al limpiar, resetear a page=0 -->
+      <a th:if="${q}" th:href="@{/clientes(estado=${estado}, page=${0})}" class="sf-btn sf-btn-ghost">Limpiar</a>
+    </form>
+
+    <div class="sf-spacer"></div>
+
+    <a th:href="@{/clientes(estado=${estado=='archivados'?'activos':'archivados'}, q=${q}, page=${0})}"
+       class="sf-btn sf-btn-ghost">
+      <span th:text="${estado=='archivados' ? 'Ver activos' : 'Ver archivados'}">Ver archivados</span>
+    </a>
+  </div>
+
+  <!-- Tabla -->
+  <div class="sf-card overflow-hidden">
+    <table class="min-w-full text-sm sf-table">
+      <thead>
+      <tr class="text-left">
+        <th>Nombre</th>
+        <th>Teléfono</th>
+        <th class="text-right">Saldo</th>
+        <th class="w-56 text-right">Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!-- iteramos la página -->
+      <tr th:each="c : ${page.content}">
+        <td th:text="${c.nombre}">Nombre</td>
+        <td th:text="${c.telefono}">Teléfono</td>
+        <td class="text-right">
+          <span th:text="${#numbers.formatDecimal(c.saldoTotal, 1, 'COMMA', 2, 'POINT')}">0,00</span>
+        </td>
+        <td>
+          <div class="flex items-center gap-2 justify-end">
+
+            <!-- Modificar (solo ADMIN) -->
+            <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+               th:href="@{|/clientes/${c.id}/editar|}"
+               class="sf-action">
+              Modificar
+            </a>
+
+            <!-- Archivar (solo ADMIN y cuando están activos) -->
+            <form th:if="${estado=='activos' and #authorization.expression('hasRole(''ADMIN'')')}"
+                  th:action="@{|/clientes/${c.id}/archivar|}" method="post">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+              <button class="sf-action">Archivar</button>
+            </form>
+
+            <!-- Restaurar (solo ADMIN y cuando están archivados) -->
+            <form th:if="${estado=='archivados' and #authorization.expression('hasRole(''ADMIN'')')}"
+                  th:action="@{|/clientes/${c.id}/restaurar|}" method="post">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+              <button class="sf-action">Restaurar</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+
+      <!-- cuando la página está vacía -->
+      <tr th:if="${#lists.isEmpty(page.content)}">
+        <td colspan="4" class="px-4 py-8 text-center text-gray-500">No hay clientes.</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <div class="flex items-center justify-between px-2 py-3">
+    <div class="text-sm text-gray-600">
+      Página <span th:text="${page.number + 1}">1</span> de <span th:text="${page.totalPages}">1</span>
+      (Total <span th:text="${page.totalElements}">0</span>)
     </div>
 
-    <!-- Filtros -->
-    <div class="flex items-center gap-3">
-      <form th:action="@{/clientes}" method="get" class="flex items-center gap-2">
-        <input type="hidden" name="estado" th:value="${estado}">
-        <input type="text" name="q" th:value="${q}" placeholder="Buscar por nombre o teléfono"
-               class="rounded-xl border px-3 py-2 text-sm">
-        <button class="rounded-xl bg-white border px-3 py-2 text-sm hover:bg-gray-50">Buscar</button>
-        <!-- Al limpiar, resetear a page=0 -->
-        <a th:if="${q}" th:href="@{/clientes(estado=${estado}, page=${0})}"
-           class="rounded-xl px-3 py-2 text-sm text-gray-600 hover:underline">Limpiar</a>
-      </form>
+    <div class="flex gap-2">
+      <a th:href="@{/clientes(estado=${estado}, q=${q}, page=${page.number - 1}, size=${page.size})}"
+         th:classappend="${page.first} ? 'pointer-events-none opacity-50' : ''"
+         class="sf-btn sf-btn-ghost">Anterior</a>
 
-      <div class="flex-1"></div>
-
-      <a th:href="@{/clientes(estado=${estado=='archivados'?'activos':'archivados'}, q=${q}, page=${0})}"
-         class="rounded-xl bg-white border px-3 py-2 text-sm hover:bg-gray-50">
-        <span th:text="${estado=='archivados' ? 'Ver activos' : 'Ver archivados'}">Ver archivados</span>
-      </a>
+      <a th:href="@{/clientes(estado=${estado}, q=${q}, page=${page.number + 1}, size=${page.size})}"
+         th:classappend="${page.last} ? 'pointer-events-none opacity-50' : ''"
+         class="sf-btn sf-btn-ghost">Siguiente</a>
     </div>
+  </div>
 
-    <!-- Tabla -->
-    <div class="bg-white border rounded-2xl overflow-hidden">
-      <table class="min-w-full text-sm">
-        <thead class="bg-gray-50">
-          <tr class="text-left">
-            <th class="px-4 py-2">Nombre</th>
-            <th class="px-4 py-2">Teléfono</th>
-            <th class="px-4 py-2 text-right">Saldo</th>
-            <th class="px-4 py-2 w-40"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- iteramos la página -->
-          <tr th:each="c : ${page.content}" class="border-t">
-            <td class="px-4 py-2" th:text="${c.nombre}">Nombre</td>
-            <td class="px-4 py-2" th:text="${c.telefono}">Teléfono</td>
-            <td class="px-4 py-2 text-right">
-              <span th:text="${#numbers.formatDecimal(c.saldoTotal, 1, 'COMMA', 2, 'POINT')}">0,00</span>
-            </td>
-            <td class="px-4 py-2 text-right">
-              <div class="flex items-center gap-2 justify-end">
-                <!-- Acciones solo para ADMIN -->
-                <form th:if="${estado=='activos'}" th:action="@{|/clientes/${c.id}/archivar|}" method="post">
-                  <button class="rounded-xl bg-white border px-3 py-1.5 text-xs hover:bg-gray-50"
-                          th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-                    Archivar
-                  </button>
-                </form>
-
-                <form th:if="${estado=='archivados'}" th:action="@{|/clientes/${c.id}/restaurar|}" method="post">
-                  <button class="rounded-xl bg-white border px-3 py-1.5 text-xs hover:bg-gray-50"
-                          th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-                    Restaurar
-                  </button>
-                </form>
-              </div>
-            </td>
-          </tr>
-
-          <!-- cuando la página está vacía -->
-          <tr th:if="${#lists.isEmpty(page.content)}">
-            <td colspan="4" class="px-4 py-8 text-center text-gray-500">No hay clientes.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Paginación -->
-    <div class="flex items-center justify-between px-2 py-3">
-      <div class="text-sm text-gray-600">
-        Página <span th:text="${page.number + 1}">1</span> de <span th:text="${page.totalPages}">1</span>
-        (Total <span th:text="${page.totalElements}">0</span>)
-      </div>
-
-      <div class="flex gap-2">
-        <a th:href="@{/clientes(estado=${estado}, q=${q}, page=${page.number - 1}, size=${page.size})}"
-           th:classappend="${page.first} ? 'pointer-events-none opacity-50'"
-           class="rounded-xl bg-white border px-3 py-1.5 text-sm hover:bg-gray-50">Anterior</a>
-
-        <a th:href="@{/clientes(estado=${estado}, q=${q}, page=${page.number + 1}, size=${page.size})}"
-           th:classappend="${page.last} ? 'pointer-events-none opacity-50'"
-           class="rounded-xl bg-white border px-3 py-1.5 text-sm hover:bg-gray-50">Siguiente</a>
-      </div>
-    </div>
-
-  </section>
+</section>
 </body>
-
 </html>

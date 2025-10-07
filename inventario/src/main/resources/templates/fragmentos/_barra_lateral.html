@@ -1,70 +1,68 @@
 <th:block th:fragment="barra_lateral">
-  <nav class="bg-white border rounded-2xl p-3 sticky top-4">
+  <nav class="sf-card p-3 sticky top-4">
     <ul class="space-y-1 text-sm">
       <li>
-        <a href="/menu" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/menu')} ? ' bg-gray-100 font-medium' : ''">
+        <a href="/menu" class="sf-navlink"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/menu')} ? ' active'">
           Menú
         </a>
       </li>
 
       <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
-        <a href="/compras" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/compras')} ? ' bg-gray-100 font-medium' : ''">
+        <a href="/compras" class="sf-navlink"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/compras')} ? ' active'">
           Compras
         </a>
       </li>
 
       <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
-        <a href="/ventas" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/ventas')} ? ' bg-gray-100 font-medium' : ''">
+        <a href="/ventas" class="sf-navlink"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/ventas')} ? ' active'">
           Ventas
         </a>
       </li>
 
       <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
-        <a href="/pagos" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/pagos')} ? ' bg-gray-100 font-medium' : ''">
+        <a href="/pagos" class="sf-navlink"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/pagos')} ? ' active'">
           Pagos
         </a>
       </li>
 
       <li>
-        <a href="/inventario" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/inventario')} ? ' bg-gray-100 font-medium' : ''">
+        <a href="/inventario" class="sf-navlink"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/inventario')} ? ' active'">
           Inventario
         </a>
       </li>
 
       <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
-        <a href="/reportes" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/reportes')} ? ' bg-gray-100 font-medium' : ''">
+        <a href="/reportes" class="sf-navlink"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/reportes')} ? ' active'">
           Reportes
         </a>
       </li>
 
-      <!-- Mostrar Proveedores a ADMIN y SECRETARIA (acciones restringidas dentro del módulo) -->
       <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
-        <a href="/proveedores" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/proveedores')} ? ' bg-gray-100 font-medium' : ''">
+        <a href="/proveedores" class="sf-navlink"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/proveedores')} ? ' active'">
           Proveedores
         </a>
       </li>
 
       <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
-        <a href="/clientes" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/clientes')} ? ' bg-gray-100 font-medium' : ''">
+        <a href="/clientes" class="sf-navlink"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/clientes')} ? ' active'">
           Clientes
         </a>
       </li>
 
       <li sec:authorize="hasRole('ADMIN')">
-        <a href="/config" class="block rounded-lg px-3 py-2 hover:bg-gray-100"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/config')} ? ' bg-gray-100 font-medium' : ''">
+        <a href="/config" class="sf-navlink"
+           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/config')} ? ' active'">
           Configuración
         </a>
       </li>
     </ul>
   </nav>
 </th:block>
-

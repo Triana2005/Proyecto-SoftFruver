@@ -4,13 +4,12 @@ import com.softfruver.inventario.model.Proveedor;
 import com.softfruver.inventario.repository.projection.ProveedorListado;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 public interface ProveedorRepository extends JpaRepository<Proveedor, Long> {
 
-  // Listados paginados (activos/archivados), orden por deuda desc y nombre
+  // === Listados paginados (activos / archivados) ===
   @Query(value = """
       SELECT p.id AS id, p.nombre AS nombre, p.telefono AS telefono,
              COALESCE(vs.deuda_total,0) AS deudaTotal
@@ -35,7 +34,7 @@ public interface ProveedorRepository extends JpaRepository<Proveedor, Long> {
       nativeQuery = true)
   Page<ProveedorListado> listarArchivadosOrdenPage(Pageable pageable);
 
-  // Búsqueda normalizada (sin tildes / case-insensitive) PAGINADA por nombre
+  // === Búsqueda normalizada (sin tildes / case-insensitive) PAGINADA por nombre ===
   @Query(value = """
       SELECT p.id AS id, p.nombre AS nombre, p.telefono AS telefono,
              COALESCE(vs.deuda_total,0) AS deudaTotal
@@ -75,4 +74,22 @@ public interface ProveedorRepository extends JpaRepository<Proveedor, Long> {
       """,
       nativeQuery = true)
   Page<ProveedorListado> buscarArchivadosPage(@Param("q") String q, Pageable pageable);
+
+  //  Unicidad 
+  @Query(value = """
+      SELECT COUNT(*) > 0
+      FROM softfruver.proveedor p
+      WHERE p.archived_at IS NULL
+        AND lower(softfruver.f_unaccent(p.nombre)) = lower(softfruver.f_unaccent(:nombre))
+      """, nativeQuery = true)
+  boolean existsNombreNormalizado(@Param("nombre") String nombre);
+
+  @Query(value = """
+      SELECT COUNT(*) > 0
+      FROM softfruver.proveedor p
+      WHERE p.archived_at IS NULL
+        AND p.telefono IS NOT NULL
+        AND p.telefono = :telefono
+      """, nativeQuery = true)
+  boolean existsTelefonoActivo(@Param("telefono") String telefono);
 }

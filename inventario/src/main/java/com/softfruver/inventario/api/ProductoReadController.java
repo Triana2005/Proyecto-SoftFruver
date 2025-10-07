@@ -15,13 +15,13 @@ public class ProductoReadController {
         this.jdbc = jdbc;
     }
 
-    // GET /api/productos?limit=50
+  
     @GetMapping
     public List<Map<String, Object>> listar(@RequestParam(defaultValue = "50") int limit) {
         if (limit < 1 || limit > 500)
             limit = 50;
 
-        // Usa parámetro para LIMIT (PostgreSQL lo soporta)
+    
         String sql = """
                 SELECT id, nombre, precio_venta_actual, activo, creado_en
                 FROM producto
@@ -32,7 +32,7 @@ public class ProductoReadController {
         return jdbc.queryForList(sql, limit);
     }
 
-    // GET /api/productos/{id}
+
     @GetMapping("/{id}")
     public Map<String, Object> porId(@PathVariable Integer id) {
         String sql = """

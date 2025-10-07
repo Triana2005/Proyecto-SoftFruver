@@ -8,16 +8,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
-import org.springframework.data.jpa.repository.Query;
-
 import java.util.List;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
-  // --- Listados ---
+  //  Listados 
   @Query(value = """
       SELECT c.id AS id, c.nombre AS nombre, c.telefono AS telefono,
              COALESCE(vs.saldo_total,0) AS saldoTotal
@@ -38,7 +33,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
       """, nativeQuery = true)
   List<ClienteListado> listarArchivadosOrden();
 
-  // --- Búsquedas (sin unaccent) ---
+  //  Busquedas (sin unaccent) 
   @Query(value = """
       SELECT c.id AS id, c.nombre AS nombre, c.telefono AS telefono,
              COALESCE(vs.saldo_total,0) AS saldoTotal
@@ -91,7 +86,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
       """, nativeQuery = true)
   boolean existsTelefonoActivo(@Param("telefono") String telefono);
 
-  // ====== Borrar si no sirve ======
+  // 
 
   @Query(value = """
       SELECT c.id AS id, c.nombre AS nombre, c.telefono AS telefono,
