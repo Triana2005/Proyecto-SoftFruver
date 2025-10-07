@@ -1,78 +1,113 @@
 <!doctype html>
-<html lang="es"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{diseño/base}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{diseño/base}">
+
 <head>
   <title>Clientes</title>
 </head>
 
 <body>
-<section layout:fragment="contenido" class="space-y-6">
+  <section layout:fragment="contenido" class="space-y-6">
 
-  <!-- Encabezado -->
-  <div class="flex items-center justify-between">
-    <h1 class="text-2xl font-semibold text-gray-900">Clientes</h1>
-    <!-- Form crear -->
-    <form th:action="@{/clientes}" method="post" class="flex items-center gap-2">
-      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-      <input name="nombre" required placeholder="Nombre"
-             class="rounded-xl border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-      <input name="telefono" placeholder="Teléfono"
-             class="rounded-xl border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-      <button class="rounded-xl bg-indigo-600 text-white px-4 py-2 text-sm hover:bg-indigo-700">Agregar</button>
+    <!-- Encabezado + Crear -->
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-semibold text-gray-900">Clientes</h1>
+
+      <form th:action="@{/clientes}" method="post" class="flex items-center gap-2">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input name="nombre" required placeholder="Nombre"
+          class="rounded-xl border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <input name="telefono" placeholder="Teléfono"
+          class="rounded-xl border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <button class="rounded-xl bg-indigo-600 text-white px-4 py-2 text-sm hover:bg-indigo-700">Agregar</button>
+      </form>
+    </div>
+
+    <!-- Toolbar: cambiar vista -->
+    <div class="flex items-center gap-2">
+      <a th:if="${estado} != 'archivados'" th:href="@{/clientes(estado='archivados', q=${q})}"
+        class="rounded-xl border px-3 py-2 text-sm hover:bg-gray-50">Ver archivados</a>
+
+      <a th:if="${estado} == 'archivados'" th:href="@{/clientes(q=${q})}"
+        class="rounded-xl border px-3 py-2 text-sm hover:bg-gray-50">Ver activos</a>
+    </div>
+
+    <!-- Buscador -->
+    <form th:action="@{/clientes}" method="get" class="flex gap-2">
+      <input type="hidden" name="estado" th:value="${estado}">
+      <input name="q" th:value="${q}" placeholder="Buscar por nombre..."
+        class="w-64 rounded-xl border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      <button class="rounded-xl border px-3 py-2 text-sm hover:bg-gray-50">Buscar</button>
+      <a th:if="${q}" th:href="@{/clientes(estado=${estado})}"
+        class="rounded-xl px-3 py-2 text-sm text-gray-600 hover:underline">Limpiar</a>
     </form>
-  </div>
+    <!-- Mensajes OK -->
+    <div th:if="${param.ok}" class="rounded-lg bg-green-50 text-green-700 px-3 py-2 text-sm mb-2">
+      <span th:switch="${param.ok}">
+        <span th:case="'creado'">Cliente creado correctamente.</span>
+        <span th:case="'archivado'">Cliente archivado.</span>
+        <span th:case="'restaurado'">Cliente restaurado.</span>
+        <span th:case="*">Operación exitosa.</span>
+      </span>
+    </div>
 
-  <!-- Buscador -->
-  <form th:action="@{/clientes}" method="get" class="flex gap-2">
-    <input name="q" th:value="${q}" placeholder="Buscar por nombre..."
-           class="w-64 rounded-xl border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-    <button class="rounded-xl border px-3 py-2 text-sm hover:bg-gray-50">Buscar</button>
-  </form>
+    <!-- Mensajes ERROR -->
+    <div th:if="${param.err}" class="rounded-lg bg-red-50 text-red-700 px-3 py-2 text-sm mb-2" th:text="${param.err}">
+      Error</div>
 
-  <!-- Mensajes -->
-  <div th:if="${param.ok}" class="rounded-lg bg-green-50 text-green-700 px-3 py-2 text-sm">
-    <span th:switch="${param.ok}">
-      <span th:case="'creado'">Cliente creado correctamente.</span>
-      <span th:case="'archivado'">Cliente archivado.</span>
-      <span th:case="*">Operación exitosa.</span>
-    </span>
-  </div>
 
-  <!-- Tabla -->
-  <div class="bg-white border rounded-2xl overflow-hidden">
-    <table class="min-w-full text-sm">
-      <thead class="bg-gray-50">
-        <tr class="text-left">
-          <th class="px-4 py-2">Nombre</th>
-          <th class="px-4 py-2">Teléfono</th>
-          <th class="px-4 py-2 text-right">Saldo</th>
-          <th class="px-4 py-2 w-32"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr th:each="c : ${clientes}" class="border-t">
-          <td class="px-4 py-2" th:text="${c.nombre}">Nombre</td>
-          <td class="px-4 py-2" th:text="${c.telefono}">Teléfono</td>
-          <td class="px-4 py-2 text-right">
-            <span th:text="${#numbers.formatDecimal(c.saldoTotal, 1, 'COMMA', 2, 'POINT')}">0,00</span>
-          </td>
-          <td class="px-4 py-2 text-right">
-            <form th:action="@{|/clientes/${c.id}/archivar|}" method="post"
-                  onsubmit="return confirm('¿Archivar este cliente?');" class="inline">
-              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-              <button class="text-red-600 hover:underline">Archivar</button>
-            </form>
-          </td>
-        </tr>
-        <tr th:if="${#lists.isEmpty(clientes)}">
-          <td colspan="4" class="px-4 py-8 text-center text-gray-500">No hay clientes.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <!-- Mensajes -->
+    <div th:if="${param.ok}" class="rounded-lg bg-green-50 text-green-700 px-3 py-2 text-sm">
+      <span th:switch="${param.ok}">
+        <span th:case="'creado'">Cliente creado correctamente.</span>
+        <span th:case="'archivado'">Cliente archivado.</span>
+        <span th:case="'restaurado'">Cliente restaurado.</span>
+        <span th:case="*">Operación exitosa.</span>
+      </span>
+    </div>
 
-</section>
+    <!-- Tabla -->
+    <div class="bg-white border rounded-2xl overflow-hidden">
+      <table class="min-w-full text-sm">
+        <thead class="bg-gray-50">
+          <tr class="text-left">
+            <th class="px-4 py-2">Nombre</th>
+            <th class="px-4 py-2">Teléfono</th>
+            <th class="px-4 py-2 text-right">Saldo</th>
+            <th class="px-4 py-2 w-40"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="c : ${clientes}" class="border-t">
+            <td class="px-4 py-2" th:text="${c.nombre}">Nombre</td>
+            <td class="px-4 py-2" th:text="${c.telefono}">Teléfono</td>
+            <td class="px-4 py-2 text-right">
+              <span th:text="${#numbers.formatDecimal(c.saldoTotal, 1, 'COMMA', 2, 'POINT')}">0,00</span>
+            </td>
+            <td class="px-4 py-2 text-right">
+              <!-- Botón según estado -->
+              <form th:if="${estado} != 'archivados'" th:action="@{|/clientes/${c.id}/archivar|}" method="post"
+                onsubmit="return confirm('¿Archivar este cliente?');" class="inline">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button class="text-red-600 hover:underline">Archivar</button>
+              </form>
+
+              <form th:if="${estado} == 'archivados'" th:action="@{|/clientes/${c.id}/restaurar|}" method="post"
+                onsubmit="return confirm('¿Restaurar este cliente?');" class="inline">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button class="text-indigo-600 hover:underline">Restaurar</button>
+              </form>
+            </td>
+          </tr>
+
+          <tr th:if="${#lists.isEmpty(clientes)}">
+            <td colspan="4" class="px-4 py-8 text-center text-gray-500">No hay clientes.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </section>
 </body>
+
 </html>
