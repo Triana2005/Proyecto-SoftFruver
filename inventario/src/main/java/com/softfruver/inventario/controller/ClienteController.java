@@ -9,6 +9,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+
+
 
 @Controller
 @RequestMapping("/clientes")
@@ -22,51 +27,63 @@ public class ClienteController {
     this.service = service;
   }
 
+
+
   @GetMapping
-  public String listado(
-      @RequestParam(value = "estado", required = false) String estado,
-      @RequestParam(value = "q", required = false) String q,
-      Model model
-  ) {
-    boolean verArchivados = "archivados".equalsIgnoreCase(estado);
-    model.addAttribute("estado", verArchivados ? "archivados" : "activos");
-    model.addAttribute("q", q);
-    model.addAttribute("clientes", service.buscarPorEstado(verArchivados, q));
-    return "clientes/lista";
-  }
+public String listado(
+    @RequestParam(value = "estado", required = false) String estado,
+    @RequestParam(value = "q", required = false) String q,
+    @PageableDefault(size = 10) Pageable pageable,
+    Model model
+) {
+  boolean verArchivados = "archivados".equalsIgnoreCase(estado);
+  Page<com.softfruver.inventario.repository.projection.ClienteListado> page =
+      service.buscarPorEstado(verArchivados, q, pageable);
+
+  model.addAttribute("estado", verArchivados ? "archivados" : "activos");
+  model.addAttribute("q", q);
+  model.addAttribute("page", page);
+  return "clientes/lista";
+}
+
+
+  
+
+
 
   @PostMapping
-  public String crear(
-      @RequestParam @NotBlank String nombre,
-      @RequestParam(required = false) String telefono,
-      RedirectAttributes ra
-  ) {
+  @PreAuthorize("hasRole('ADMIN')")
+  public String crear(@RequestParam @NotBlank String nombre,
+                      @RequestParam(required = false) String telefono,
+                      RedirectAttributes ra) {
     try {
       service.crear(nombre, telefono);
-      ra.addAttribute("ok", "creado");
+      ra.addFlashAttribute("ok", "creado");          // Flash para mensaje
     } catch (IllegalArgumentException ex) {
-      // Mensaje del Service (nombre vacío o duplicado normalizado)
-      ra.addAttribute("err", ex.getMessage());
+      ra.addFlashAttribute("err", ex.getMessage());  // Flash error
     } catch (DataIntegrityViolationException ex) {
-      // Respaldo por si el índice único de BD salta primero
-      ra.addAttribute("err", "Ya existe un cliente activo con ese nombre (ignorando tildes y mayúsculas).");
+      ra.addFlashAttribute("err",
+          "Ya existe un cliente activo con ese nombre (ignorando tildes y mayúsculas).");
     }
     return "redirect:/clientes";
   }
 
   @PostMapping("/{id}/archivar")
+  @PreAuthorize("hasRole('ADMIN')")
   public String archivar(@PathVariable Long id, RedirectAttributes ra) {
     service.archivar(id);
-    ra.addAttribute("ok", "archivado");
+    ra.addFlashAttribute("ok", "archivado");         // Flash para mensaje
     return "redirect:/clientes";
   }
 
   @PostMapping("/{id}/restaurar")
+  @PreAuthorize("hasRole('ADMIN')")
   public String restaurar(@PathVariable Long id, RedirectAttributes ra) {
     service.restaurar(id);
-    ra.addAttribute("ok", "restaurado");
-    ra.addAttribute("estado", "archivados");
+    ra.addFlashAttribute("ok", "restaurado");        // Flash para mensaje
+    ra.addAttribute("estado", "archivados");         // Param navegable (filtro)
     return "redirect:/clientes";
   }
 }
+
 

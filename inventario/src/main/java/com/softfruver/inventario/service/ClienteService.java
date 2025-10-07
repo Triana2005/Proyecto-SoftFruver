@@ -5,6 +5,8 @@ import com.softfruver.inventario.repository.ClienteRepository;
 import com.softfruver.inventario.repository.projection.ClienteListado;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -78,4 +80,18 @@ public class ClienteService {
     c.setActualizadoEn(OffsetDateTime.now());
     repo.save(c);
   }
+
+  @org.springframework.transaction.annotation.Transactional(readOnly = true)
+public Page<com.softfruver.inventario.repository.projection.ClienteListado>
+buscarPorEstado(boolean archivados, String q, Pageable pageable) {
+  String term = (q == null || q.isBlank()) ? null : q.trim();
+  if (term == null) {
+    return archivados
+        ? repo.listarArchivadosOrdenPage(pageable)
+        : repo.listarVisiblesOrdenPage(pageable);
+  }
+  return archivados
+      ? repo.buscarArchivadosPage(term, pageable)
+      : repo.buscarActivosPage(term, pageable);
+}
 }

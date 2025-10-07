@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{diseño/base}">
+
+<head>
+  <title>Proveedores</title>
+</head>
+
+<body>
+<section layout:fragment="contenido" class="space-y-6">
+
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-semibold text-gray-900">Proveedores</h1>
+
+    <!-- SOLO ADMIN -->
+    <form th:action="@{/proveedores}" method="post" class="flex items-center gap-2"
+          th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+      <input type="text" name="nombre" placeholder="Nombre"
+             class="rounded-xl border px-3 py-2 text-sm" required>
+      <input type="text" name="telefono" placeholder="Teléfono"
+             class="rounded-xl border px-3 py-2 text-sm">
+      <button type="submit" class="rounded-xl bg-gray-900 text-white px-3 py-2 text-sm hover:bg-gray-800">
+        Registrar
+      </button>
+    </form>
+  </div>
+
+  <!-- Filtros -->
+  <div class="flex items-center gap-3">
+    <form th:action="@{/proveedores}" method="get" class="flex items-center gap-2">
+      <input type="hidden" name="estado" th:value="${estado}">
+      <input type="text" name="q" th:value="${q}" placeholder="Buscar por nombre"
+             class="rounded-xl border px-3 py-2 text-sm">
+      <button class="rounded-xl bg-white border px-3 py-2 text-sm hover:bg-gray-50">Buscar</button>
+      <a th:if="${q}" th:href="@{/proveedores(estado=${estado}, page=${0})}"
+         class="rounded-xl px-3 py-2 text-sm text-gray-600 hover:underline">Limpiar</a>
+    </form>
+
+    <div class="flex-1"></div>
+
+    <a th:href="@{/proveedores(estado=${estado=='archivados'?'activos':'archivados'}, q=${q}, page=${0})}"
+       class="rounded-xl bg-white border px-3 py-2 text-sm hover:bg-gray-50">
+      <span th:text="${estado=='archivados' ? 'Ver activos' : 'Ver archivados'}">Ver archivados</span>
+    </a>
+  </div>
+
+  <!-- Tabla -->
+  <div class="bg-white border rounded-2xl overflow-hidden">
+    <table class="min-w-full text-sm">
+      <thead class="bg-gray-50">
+      <tr class="text-left">
+        <th class="px-4 py-2">Proveedor</th>
+        <th class="px-4 py-2">Teléfono</th>
+        <th class="px-4 py-2 text-right">Deuda</th>
+        <th class="px-4 py-2 w-40"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="p : ${page.content}" class="border-t">
+        <td class="px-4 py-2" th:text="${p.nombre}">Nombre</td>
+        <td class="px-4 py-2" th:text="${p.telefono}">Teléfono</td>
+        <td class="px-4 py-2 text-right">
+          <span th:text="${#numbers.formatDecimal(p.deudaTotal, 1, 'COMMA', 2, 'POINT')}">0,00</span>
+        </td>
+        <td class="px-4 py-2 text-right">
+          <div class="flex items-center gap-2 justify-end">
+
+            <!-- Acciones solo ADMIN -->
+            <form th:if="${estado=='activos'}" th:action="@{|/proveedores/${p.id}/archivar|}" method="post">
+              <button class="rounded-xl bg-white border px-3 py-1.5 text-xs hover:bg-gray-50"
+                      th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                Archivar
+              </button>
+            </form>
+
+            <form th:if="${estado=='archivados'}" th:action="@{|/proveedores/${p.id}/restaurar|}" method="post">
+              <button class="rounded-xl bg-white border px-3 py-1.5 text-xs hover:bg-gray-50"
+                      th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                Restaurar
+              </button>
+            </form>
+
+          </div>
+        </td>
+      </tr>
+
+      <tr th:if="${#lists.isEmpty(page.content)}">
+        <td colspan="4" class="px-4 py-8 text-center text-gray-500">No hay proveedores.</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <div class="flex items-center justify-between px-2 py-3">
+    <div class="text-sm text-gray-600">
+      Página <span th:text="${page.number + 1}">1</span> de <span th:text="${page.totalPages}">1</span>
+      (Total <span th:text="${page.totalElements}">0</span>)
+    </div>
+
+    <div class="flex gap-2">
+      <a th:href="@{/proveedores(estado=${estado}, q=${q}, page=${page.number - 1}, size=${page.size})}"
+         th:classappend="${page.first} ? 'pointer-events-none opacity-50'"
+         class="rounded-xl bg-white border px-3 py-1.5 text-sm hover:bg-gray-50">Anterior</a>
+
+      <a th:href="@{/proveedores(estado=${estado}, q=${q}, page=${page.number + 1}, size=${page.size})}"
+         th:classappend="${page.last} ? 'pointer-events-none opacity-50'"
+         class="rounded-xl bg-white border px-3 py-1.5 text-sm hover:bg-gray-50">Siguiente</a>
+    </div>
+  </div>
+
+</section>
+</body>
+</html>
