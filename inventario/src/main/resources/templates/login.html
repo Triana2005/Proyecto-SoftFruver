@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar sesión | SoftFruver</title>
+
+  <!-- Favicon (sirviendo desde /static/iconos/) -->
+  <link rel="icon" th:href="@{/iconos/favicon.jpeg}" type="image/jpeg">
+  <link rel="shortcut icon" th:href="@{/iconos/favicon.jpeg}">
+
+  <!-- Refuerzo no-cache (además de headers en el controlador) -->
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -12,31 +21,51 @@
   <main class="sf-card w-full max-w-sm">
     <h1 class="text-2xl font-semibold text-center text-gray-800 mb-4">SoftFruver</h1>
 
-    <!-- Mensajes de error / logout -->
-    <div th:if="${param.error}" class="sf-alert sf-alert-danger mb-3">
+    <!-- Mensajes de estado (provienen de atributos de modelo: error/logout/captcha/expired) -->
+    <div th:if="${error}" class="sf-alert sf-alert-danger mb-3">
       Usuario o contraseña incorrectos.
     </div>
-    <div th:if="${param.logout}" class="sf-alert sf-alert-success mb-3">
+    <div th:if="${logout}" class="sf-alert sf-alert-success mb-3">
       Sesión cerrada correctamente.
     </div>
-    <div th:if="${param.captcha}" class="sf-alert sf-alert-warning mb-3">
+    <div th:if="${captcha}" class="sf-alert sf-alert-warning mb-3">
       Respuesta de verificación incorrecta. Intenta de nuevo.
+    </div>
+    <div th:if="${expired}" class="sf-alert sf-alert-info mb-3">
+      El formulario expiró. Por favor intenta de nuevo.
     </div>
 
     <!-- Formulario de login -->
-    <form th:action="@{/login}" method="post" class="space-y-3">
+    <form th:action="@{/login}" method="post" class="space-y-3" autocomplete="off" novalidate>
+      <!-- CSRF -->
       <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+      <!-- NONCE del captcha (evita formularios viejos) -->
+      <input type="hidden" name="captchaNonce" th:value="${captchaNonce}" />
 
       <div>
         <label for="username" class="block text-sm text-gray-700 mb-1">Usuario</label>
-        <input type="text" id="username" name="username" required autofocus
-               class="sf-input w-full" />
+        <input
+          type="text"
+          id="username"
+          name="username"
+          required
+          autofocus
+          class="sf-input w-full"
+          autocomplete="username"
+          spellcheck="false"
+        />
       </div>
 
       <div>
         <label for="password" class="block text-sm text-gray-700 mb-1">Contraseña</label>
-        <input type="password" id="password" name="password" required
-               class="sf-input w-full" />
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          class="sf-input w-full"
+          autocomplete="current-password"
+        />
       </div>
 
       <!-- CAPTCHA -->
@@ -50,14 +79,17 @@
             <span class="font-medium" th:text="${captchaPregunta}">5 + 7 = ?</span>
           </span>
         </div>
-        <input type="text"
-               inputmode="numeric"
-               pattern="[0-9]*"
-               id="captcha"
-               name="captcha"
-               required
-               class="sf-input w-full"
-               aria-describedby="captcha-help" />
+        <input
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          id="captcha"
+          name="captcha"
+          required
+          class="sf-input w-full"
+          aria-describedby="captcha-help"
+          autocomplete="off"
+        />
         <div id="captcha-help" class="mt-1 text-xs text-gray-500 flex items-center justify-between">
           <span>Escribe el resultado de la operación.</span>
           <!-- Al hacer click, recarga GET /login y se regenera la operación -->
