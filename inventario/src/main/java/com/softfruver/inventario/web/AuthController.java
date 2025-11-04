@@ -18,6 +18,11 @@ public class AuthController {
 
     private final SecureRandom rnd = new SecureRandom();
 
+    @GetMapping({ "/", "" })
+    public String root() {
+        return "redirect:/login";
+    }
+
     @GetMapping("/login")
     public String login(Model model, HttpSession session, HttpServletResponse response) {
         // No cachear la página de login
