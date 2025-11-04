@@ -5,32 +5,42 @@
         contenido=~{::contenido}
       )}">
 <body>
-<section th:fragment="contenido" class="space-y-4">
+<section th:fragment="contenido">
 
-  <h1 class="text-2xl font-semibold text-gray-900">Nuevo cliente</h1>
+  <!-- Contenedor centrado y ancho cómodo -->
+  <div class="w-full max-w-[800px] mx-auto space-y-4">
 
-  <div class="sf-card max-w-md">
-    <form th:action="@{/clientes}" method="post" class="space-y-4">
-      <!-- CSRF -->
-      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <h1 class="text-2xl font-semibold text-gray-900">Nuevo cliente</h1>
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1" for="nombre">Nombre *</label>
-        <input id="nombre" name="nombre" type="text" required th:value="${nombre}" class="sf-input">
-      </div>
+    <!-- Mensajes (opcional) -->
+    <div th:if="${ok}"  class="sf-alert sf-alert-success" th:text="${ok}">ok</div>
+    <div th:if="${err}" class="sf-alert sf-alert-error"   th:text="${err}">err</div>
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1" for="telefono">Teléfono</label>
-        <input id="telefono" name="telefono" type="text" th:value="${telefono}" class="sf-input">
-      </div>
+    <div class="sf-card p-4">
+      <form th:action="@{/clientes}" method="post" class="space-y-4">
+        <!-- CSRF -->
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-      <div class="flex gap-2">
-        <a th:href="@{/clientes}" class="sf-btn sf-btn-ghost">Cancelar</a>
-        <button type="submit" class="sf-btn sf-btn-primary">Guardar</button>
-      </div>
-    </form>
+        <div>
+          <label class="sf-label" for="nombre">Nombre *</label>
+          <input id="nombre" name="nombre" type="text" required minlength="2"
+                 th:value="${nombre}" class="sf-input">
+        </div>
+
+        <div>
+          <label class="sf-label" for="telefono">Teléfono</label>
+          <input id="telefono" name="telefono" type="text"
+                 th:value="${telefono}" class="sf-input">
+        </div>
+
+        <div class="flex gap-2">
+          <a th:href="@{/clientes}" class="sf-btn sf-btn-ghost">Cancelar</a>
+          <button type="submit" class="sf-btn sf-btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+
   </div>
-
 </section>
 </body>
 </html>

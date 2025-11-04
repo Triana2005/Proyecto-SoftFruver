@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security6">
+<head th:replace="~{fragmentos/_head :: head('Detalle de venta')}"></head>
+<body>
+
+  <!-- Sidebar fija -->
+  <aside class="sidebar-fixed" th:replace="~{fragmentos/_barra_lateral :: barra_lateral}"></aside>
+
+  <!-- Contenido desplazado -->
+  <div class="wrapper">
+
+    <!-- Topbar centrada -->
+    <div class="header-band">
+      <div th:replace="~{fragmentos/_barra_superior :: barra_superior}"></div>
+    </div>
+
+    <!-- Página centrada -->
+    <div class="page">
+      <section class="w-full max-w-[1100px] mx-auto">
+        <div class="sf-card p-4 md:p-5 space-y-4">
+
+          <!-- Encabezado / migas -->
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-gray-500">
+                <a class="sf-link" th:href="@{/ventas}">Ventas</a> ·
+                <span th:text="'Venta #'+${cab.id}">Venta</span>
+              </div>
+              <h1 class="text-xl font-semibold mt-1">Detalle de venta</h1>
+            </div>
+
+            <!-- Botonera -->
+            <div class="flex items-center gap-2">
+              <a th:href="@{/ventas}" class="sf-btn">Volver</a>
+
+              <a class="sf-btn sf-btn-primary"
+                 th:href="@{|/ventas/${ventaId}/editar|}">
+                Editar
+              </a>
+
+              <form th:action="@{|/ventas/${ventaId}/eliminar|}" method="post"
+                    onsubmit="return confirm('¿Eliminar venta? Esta acción no se puede deshacer.');">
+                <input type="hidden" th:if="${_csrf != null}"
+                       th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit" class="sf-btn sf-btn-danger">Eliminar</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Cabecera -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div class="sf-card p-3">
+              <div class="text-xs text-gray-500">Cliente</div>
+              <div class="font-medium" th:text="${cab.cliente}">Cliente</div>
+            </div>
+            <div class="sf-card p-3">
+              <div class="text-xs text-gray-500">Fecha</div>
+              <div class="font-medium" th:text="${cab.fecha}">2025-01-01</div>
+            </div>
+            <div class="sf-card p-3">
+              <div class="text-xs text-gray-500">Crédito</div>
+              <div class="font-medium" th:text="${cab.esCredito ? 'Sí' : 'No'}">No</div>
+            </div>
+            <div class="sf-card p-3 text-right">
+              <div class="text-xs text-gray-500">Total</div>
+              <div class="font-semibold text-lg"
+                   th:text="${#numbers.formatDecimal(cab.total,0,'COMMA',2,'POINT')}">0.00</div>
+            </div>
+          </div>
+
+          <!-- Items -->
+          <div class="overflow-x-auto">
+            <table class="sf-table w-full">
+              <thead>
+              <tr>
+                <th class="text-left">Producto</th>
+                <th class="text-right">Cantidad (kg)</th>
+                <th class="text-right">Precio unit.</th>
+                <th class="text-right">Subtotal</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="it : ${detalle}">
+                <td th:text="${it.producto}">Manzana</td>
+                <td class="text-right"
+                    th:text="${#numbers.formatDecimal(it.cantidadKg,0,'COMMA',3,'POINT')}">0.000</td>
+                <td class="text-right"
+                    th:text="${#numbers.formatDecimal(it.precioUnitario,0,'COMMA',2,'POINT')}">0.00</td>
+                <td class="text-right"
+                    th:text="${#numbers.formatDecimal(it.cantidadKg * it.precioUnitario,0,'COMMA',2,'POINT')}">0.00</td>
+              </tr>
+
+              <tr th:if="${#lists.isEmpty(detalle)}">
+                <td colspan="4" class="text-center text-gray-500 py-6">
+                  Esta venta no tiene ítems.
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          
+        </div>
+      </section>
+    </div><!-- /.page -->
+
+  </div><!-- /.wrapper -->
+</body>
+</html>

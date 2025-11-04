@@ -1,8 +1,19 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <th:block th:fragment="head(titulo)">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title th:text="${titulo}">SoftFruver</title>
+
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tu CSS -->
   <link rel="stylesheet" th:href="@{/css/app.css}" />
-  <link rel="icon" href="/imagenes/logo.svg" type="image/svg+xml" />
+
+  <!-- Favicon: un solo JPEG para todo -->
+  <link rel="icon" th:href="@{/iconos/favicon.jpeg}" type="image/jpeg" />
+  <link rel="alternate icon" th:href="@{/iconos/favicon.jpeg}" type="image/jpeg" />
+  <link rel="apple-touch-icon" th:href="@{/iconos/favicon.jpeg}" />
 </th:block>
+</html>

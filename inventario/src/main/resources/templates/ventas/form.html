@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security6">
+<head th:replace="~{fragmentos/_head :: head('Nueva venta')}"></head>
+<body>
+
+  <!-- Sidebar fija -->
+  <aside class="sidebar-fixed" th:replace="~{fragmentos/_barra_lateral :: barra_lateral}"></aside>
+
+  <!-- Contenido desplazado -->
+  <div class="wrapper">
+
+    <!-- Topbar centrada -->
+    <div class="header-band">
+      <div th:replace="~{fragmentos/_barra_superior :: barra_superior}"></div>
+    </div>
+
+    <!-- Contenido principal centrado -->
+    <main class="page">
+      <section class="w-full max-w-[1100px] mx-auto">
+        <div class="sf-card p-4 md:p-5 space-y-4">
+
+          <!-- Encabezado -->
+          <div class="page-head">
+            <div>
+              <div class="text-xs text-gray-500">
+                <a class="sf-link" th:href="@{/ventas}">Ventas</a> ·
+                <span>Nueva</span>
+              </div>
+              <h1 class="text-xl font-semibold mt-1">Registrar venta</h1>
+            </div>
+            <a th:href="@{/ventas}" class="sf-btn">Volver</a>
+          </div>
+
+          <!-- Error -->
+          <div th:if="${error}" class="sf-alert sf-alert-error" th:text="${error}"></div>
+
+          <!-- Formulario -->
+          <form method="post" th:action="@{/ventas}" class="space-y-4">
+
+            <!-- Cabecera -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <label class="sf-label">Cliente</label>
+                <select class="sf-input" name="clienteId" required>
+                  <option value="" selected disabled>Seleccione...</option>
+                  <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nombre}"></option>
+                </select>
+              </div>
+              <div>
+                <label class="sf-label">Fecha</label>
+                <input class="sf-input" type="date" name="fecha" th:value="${hoy}" required>
+              </div>
+              <div class="flex items-center gap-2">
+                <input id="credito" type="checkbox" name="credito" value="true" class="sf-checkbox">
+                <label class="sf-label !mb-0" for="credito">¿Venta a crédito?</label>
+              </div>
+            </div>
+
+            <!-- Ítems -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <h2 class="font-semibold">Ítems</h2>
+                <button type="button" class="sf-btn sf-btn-primary" id="agregarFila">Agregar ítem</button>
+              </div>
+
+              <div class="card-table">
+                <div class="overflow-x-auto">
+                  <table class="sf-table w-full" id="tablaItems">
+                    <thead>
+                      <tr>
+                        <th class="text-left">Producto</th>
+                        <th class="text-right">Cantidad (kg)</th>
+                        <th class="text-right">Precio unit.</th>
+                        <th class="text-right">Subtotal</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="tbodyItems">
+
+                      <!-- Fila inicial visible (funciona sin JS) -->
+                      <tr class="fila-item">
+                        <td>
+                          <select class="sf-input" name="productoId" required>
+                            <option value="" selected disabled>Seleccione...</option>
+                            <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}"></option>
+                          </select>
+                        </td>
+                        <td>
+                          <input class="sf-input text-right" type="number" name="cantidadKg" step="0.001" min="0.001" required>
+                        </td>
+                        <td>
+                          <input class="sf-input text-right" type="number" name="precioUnit" step="0.01" min="0" required>
+                        </td>
+                        <td class="text-right subtotal">0.00</td>
+                        <td><button type="button" class="sf-btn btn-quitar">Quitar</button></td>
+                      </tr>
+
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="5" class="text-xs text-gray-500">
+                          * El total se calculará automáticamente en la base de datos.
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="flex gap-2">
+              <button type="submit" class="sf-btn sf-btn-primary">Guardar venta</button>
+              <a th:href="@{/ventas}" class="sf-btn">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+  </div><!-- /.wrapper -->
+
+  <!-- Prototipos ocultos para clonado por JS -->
+  <div class="hidden" id="prototipos">
+    <select id="protoSelectProducto">
+      <option value="" selected disabled>Seleccione...</option>
+      <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}"></option>
+    </select>
+
+    <table><tbody>
+    <tr id="protoFila" class="fila-item">
+      <td><!-- el select se clona desde #protoSelectProducto --></td>
+      <td><input class="sf-input text-right" type="number" name="cantidadKg" step="0.001" min="0.001" required></td>
+      <td><input class="sf-input text-right" type="number" name="precioUnit" step="0.01" min="0" required></td>
+      <td class="text-right subtotal">0.00</td>
+      <td><button type="button" class="sf-btn btn-quitar">Quitar</button></td>
+    </tr>
+    </tbody></table>
+  </div>
+
+  <!-- JS externo -->
+  <script src="/js/ventas-form.js"></script>
+</body>
+</html>

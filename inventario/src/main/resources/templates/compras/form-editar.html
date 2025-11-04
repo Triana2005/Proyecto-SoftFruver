@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security6">
+<head th:replace="~{fragmentos/_head :: head('Editar compra')}"></head>
+<body>
+
+  <!-- Barra lateral fija (usa tu fragmento existente que ya aplica sidebar-fixed) -->
+  <aside th:replace="~{fragmentos/_barra_lateral :: barra_lateral}"></aside>
+
+  <!-- Envoltura de contenido que respeta el sidebar -->
+  <div class="wrapper">
+    <!-- Barra superior centrada (usa .header-band dentro del fragmento) -->
+    <div th:replace="~{fragmentos/_barra_superior :: barra_superior}"></div>
+
+    <!-- Contenido centrado y con max-width controlado por --page-max -->
+    <main class="page">
+
+      <div class="sf-card p-4 md:p-5 space-y-4">
+
+        <div class="page-head">
+          <div>
+            <div class="text-xs text-gray-500">
+              <a class="sf-link" th:href="@{/compras}">Compras</a> ·
+              <a class="sf-link" th:href="@{|/compras/${compraId}|}" th:text="'Compra #'+${compraId}">Compra</a> ·
+              <span>Editar</span>
+            </div>
+            <h1 class="text-xl font-semibold mt-1">Editar compra</h1>
+          </div>
+          <div class="flex gap-2">
+            <a th:href="@{|/compras/${compraId}|}" class="sf-btn">Cancelar</a>
+          </div>
+        </div>
+
+        <div th:if="${error}" class="sf-alert sf-alert-error" th:text="${error}"></div>
+
+        <form method="post" th:action="@{|/compras/${compraId}|}" class="space-y-4">
+          <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+          <!-- Cabecera: 2 columnas (proveedor / fecha) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="sf-label">Proveedor</label>
+              <select class="sf-input" name="proveedorId" required>
+                <option value="" disabled>Seleccione...</option>
+                <option th:each="p : ${proveedores}"
+                        th:value="${p.id}"
+                        th:selected="${cab.proveedorId} == ${p.id}"
+                        th:text="${p.nombre}">
+                </option>
+              </select>
+            </div>
+            <div>
+              <label class="sf-label">Fecha</label>
+              <input class="sf-input" type="date" name="fecha"
+                     th:value="${#temporals.format(cab.fecha,'yyyy-MM-dd')}" required>
+            </div>
+          </div>
+
+          <!-- Ítems -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="font-semibold">Ítems</h2>
+              <button type="button" class="sf-btn sf-btn-primary" id="agregarFila">Agregar ítem</button>
+            </div>
+
+            <div class="card-table">
+              <div class="overflow-x-auto">
+                <table class="sf-table w-full" id="tablaItems">
+                  <thead>
+                    <tr>
+                      <th class="text-left">Producto</th>
+                      <th class="text-right">Cantidad (kg)</th>
+                      <th class="text-right">Precio unit.</th>
+                      <th class="text-right">Subtotal</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbodyItems">
+                    <tr class="fila-item" th:each="it : ${detalle}">
+                      <td>
+                        <select class="sf-input" name="productoId" required>
+                          <option value="" disabled>Seleccione...</option>
+                          <option th:each="p : ${productos}"
+                                  th:value="${p.id}"
+                                  th:selected="${p.id} == ${it.productoId}"
+                                  th:text="${p.nombre}">
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <input class="sf-input text-right" type="number" name="cantidadKg"
+                               step="0.001" min="0.001" th:value="${it.cantidadKg}" required>
+                      </td>
+                      <td>
+                        <input class="sf-input text-right" type="number" name="precioUnit"
+                               step="0.01" min="0" th:value="${it.precioUnitario}" required>
+                      </td>
+                      <td class="text-right subtotal"
+                          th:text="${#numbers.formatDecimal(it.cantidadKg * it.precioUnitario,0,'COMMA',2,'POINT')}">
+                        0.00
+                      </td>
+                      <td><button type="button" class="sf-btn btn-quitar">Quitar</button></td>
+                    </tr>
+
+                    <tr class="fila-item" th:if="${#lists.isEmpty(detalle)}">
+                      <td>
+                        <select class="sf-input" name="productoId" required>
+                          <option value="" disabled selected>Seleccione...</option>
+                          <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}"></option>
+                        </select>
+                      </td>
+                      <td><input class="sf-input text-right" type="number" name="cantidadKg" step="0.001" min="0.001" required></td>
+                      <td><input class="sf-input text-right" type="number" name="precioUnit" step="0.01" min="0" required></td>
+                      <td class="text-right subtotal">0.00</td>
+                      <td><button type="button" class="sf-btn btn-quitar">Quitar</button></td>
+                    </tr>
+                  </tbody>
+
+                  <tfoot>
+                    <tr>
+                      <td colspan="5" class="text-xs text-gray-500">
+                        * El total se recalcula en la base de datos por triggers al guardar.
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex gap-2">
+            <button type="submit" class="sf-btn sf-btn-primary">Guardar cambios</button>
+            <a th:href="@{|/compras/${compraId}|}" class="sf-btn">Cancelar</a>
+          </div>
+        </form>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Prototipos ocultos -->
+  <div class="hidden" id="prototipos">
+    <select id="protoSelectProducto">
+      <option value="" disabled selected>Seleccione...</option>
+      <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}"></option>
+    </select>
+
+    <table><tbody>
+    <tr id="protoFila" class="fila-item">
+      <td><!-- el select se clona desde #protoSelectProducto --></td>
+      <td><input class="sf-input text-right" type="number" name="cantidadKg" step="0.001" min="0.001" required></td>
+      <td><input class="sf-input text-right" type="number" name="precioUnit" step="0.01" min="0" required></td>
+      <td class="text-right subtotal">0.00</td>
+      <td><button type="button" class="sf-btn btn-quitar">Quitar</button></td>
+    </tr>
+    </tbody></table>
+  </div>
+
+  <script src="/js/compra-form.js"></script>
+</body>
+</html>

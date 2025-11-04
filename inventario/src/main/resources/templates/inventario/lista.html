@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security6">
+<head th:replace="~{fragmentos/_head :: head('Inventario')}"></head>
+<body>
+
+  <!-- Sidebar fija -->
+  <aside class="sidebar-fixed" th:replace="~{fragmentos/_barra_lateral :: barra_lateral}"></aside>
+
+  <!-- Contenido desplazado a la derecha del sidebar -->
+  <div class="wrapper">
+
+    <!-- Topbar centrada al ancho de página -->
+    <div class="header-band">
+      <div th:replace="~{fragmentos/_barra_superior :: barra_superior}"></div>
+    </div>
+
+    <!-- Página centrada -->
+    <div class="page">
+      <section class="w-full max-w-[1100px] mx-auto">
+        <div class="sf-card p-4 md:p-5">
+
+          <!-- Título + métricas -->
+          <div class="flex items-center justify-between mb-4">
+            <h1 class="text-xl font-semibold">Inventario</h1>
+            <div class="text-sm text-gray-600">
+              <span th:text="|Productos: ${totalProductos}|">Productos: 0</span>
+              <span class="mx-2">•</span>
+              <span th:text="|Alertas (≤20 kg): ${totalAlertas}|">Alertas (≤20 kg): 0</span>
+            </div>
+          </div>
+
+          <!-- Buscador (GET) -->
+          <form method="get" th:action="@{/inventario}" class="mb-3 flex gap-2">
+            <input type="text" name="q" th:value="${q}" placeholder="Buscar producto..."
+                   class="sf-input w-full" />
+            <button type="submit" class="sf-btn sf-btn-primary">Buscar</button>
+            <a th:href="@{/inventario}" class="sf-btn">Limpiar</a>
+          </form>
+
+          <!-- Tabla -->
+          <div class="overflow-x-auto">
+            <table class="sf-table w-full">
+              <thead>
+              <tr>
+                <th class="text-left">Producto</th>
+                <th class="text-right">Cantidad (kg)</th>
+                <th class="text-left">Estado</th>
+              </tr>
+              </thead>
+              <tbody>
+              <!-- Resalta filas con stock ≤ 20 kg -->
+              <tr th:each="it : ${items}"
+                  th:classappend="${it.stockKg <= 20} ? 'bg-red-50' : ''">
+                <td th:text="${it.nombre}"
+                    th:classappend="${it.stockKg <= 20} ? ' text-red-700 font-medium' : ''">Producto</td>
+
+                <td class="text-right"
+                    th:text="${#numbers.formatDecimal(it.stockKg, 0, 'COMMA', 3, 'POINT')}">0,000</td>
+
+                <td>
+                  <!-- Badges simples sin depender de clases custom -->
+                  <span th:if="${it.stockKg <= 0}"
+                        class="inline-block text-[11px] px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-200">
+                    Sin stock
+                  </span>
+                  <span th:if="${it.stockKg > 0 and it.stockKg <= 20}"
+                        class="inline-block text-[11px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                    Bajo
+                  </span>
+                  <span th:if="${it.stockKg > 20}"
+                        class="inline-block text-[11px] px-2 py-0.5 rounded-full bg-green-100 text-green-800 border border-green-200">
+                    OK
+                  </span>
+                </td>
+              </tr>
+
+              <tr th:if="${#lists.isEmpty(items)}">
+                <td colspan="3" class="text-center text-gray-500 py-6">
+                  No hay productos para mostrar.
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="mt-3 text-xs text-gray-500">
+            * El stock se actualiza automáticamente por Compras/Ventas.
+          </p>
+        </div>
+      </section>
+    </div><!-- /.page -->
+
+  </div><!-- /.wrapper -->
+</body>
+</html>

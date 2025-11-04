@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragmentos/_head :: head('Ventas')}"></head>
+<body>
+
+  <!-- Sidebar fija -->
+  <aside class="sidebar-fixed" th:replace="~{fragmentos/_barra_lateral :: barra_lateral}"></aside>
+
+  <!-- Contenido desplazado a la derecha del sidebar -->
+  <div class="wrapper">
+
+    <!-- Topbar centrada al ancho de página -->
+    <div class="header-band">
+      <div th:replace="~{fragmentos/_barra_superior :: barra_superior}"></div>
+    </div>
+
+    <!-- Contenido principal centrado -->
+    <div class="page">
+      <section class="flex justify-between items-center">
+        <h1 class="text-xl md:text-2xl font-semibold">Ventas</h1>
+        <a class="sf-btn sf-btn-primary" th:href="@{/ventas/nueva}">Nueva venta</a>
+      </section>
+
+      <p class="text-sm text-gray-500 mt-1">Listado de ventas registradas</p>
+
+      <!-- Filtros -->
+      <div class="sf-card p-4 md:p-5 mt-4">
+        <form class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end" th:action="@{/ventas}" method="get">
+
+          <!-- Buscar cliente con datalist (servidor) -->
+          <div class="md:col-span-6">
+            <label class="sf-label" for="q">Buscar (cliente)</label>
+            <input id="q" name="q" type="text" class="sf-input w-full"
+                   placeholder="Ej. 'Cliente ACME'"
+                   list="dl-clientes" autocomplete="off"
+                   th:value="${q}">
+            <datalist id="dl-clientes">
+              <option th:each="c : ${clientes}" th:value="${c.nombre}">Cliente</option>
+            </datalist>
+            <p class="text-xs text-gray-400 mt-1">Puedes escribir o seleccionar de la lista.</p>
+          </div>
+
+          <!-- Desde -->
+          <div class="md:col-span-3">
+            <label class="sf-label" for="desde">Desde</label>
+            <input id="desde" name="desde" type="date" class="sf-input w-full" th:value="${desde}">
+          </div>
+
+          <!-- Hasta -->
+          <div class="md:col-span-3">
+            <label class="sf-label" for="hasta">Hasta</label>
+            <input id="hasta" name="hasta" type="date" class="sf-input w-full" th:value="${hasta}">
+          </div>
+
+          <!-- Botones -->
+          <div class="md:col-span-12 flex gap-2">
+            <button type="submit" class="sf-btn sf-btn-primary">Aplicar</button>
+            <a class="sf-btn sf-btn-ghost" th:href="@{/ventas}">Limpiar</a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Tabla -->
+      <div class="sf-card p-0 mt-4 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="sf-table w-full">
+            <thead>
+            <tr>
+              <th class="text-left">Fecha</th>
+              <th class="text-left">Cliente</th>
+              <th class="text-right">Productos</th>
+              <th class="text-right">Total</th>
+              <th class="text-right">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="it : ${items}">
+              <td th:text="${it.fecha != null ? #temporals.format(it.fecha, 'dd/MM/yyyy') : ''}">01/10/2025</td>
+
+              <!-- usa un contenedor interno para el chip de Crédito -->
+              <td>
+                <div class="flex items-center gap-2">
+                  <a class="sf-link" th:href="@{|/ventas/${it.id}|}" th:text="${it.cliente}">Cliente</a>
+                  <span th:if="${it.esCredito}"
+                        class="inline-block text-[11px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                    Crédito
+                  </span>
+                </div>
+              </td>
+
+              <td class="text-right" th:text="${it.productos != null ? it.productos : '—'}">—</td>
+
+              <td class="text-right"
+                  th:text="${it.total != null ? #numbers.formatDecimal(it.total, 0, 'COMMA', 2, 'POINT') : '0,00'}">0,00</td>
+
+              <td class="text-right">
+                <div class="inline-flex gap-2">
+                  <a class="sf-btn sf-btn-ghost" th:href="@{|/ventas/${it.id}|}">Ver</a>
+                  <a class="sf-btn sf-btn-primary" th:href="@{|/ventas/${it.id}/editar|}">Editar</a>
+                  <form th:action="@{|/ventas/${it.id}/eliminar|}" method="post"
+                        onsubmit="return confirm('¿Eliminar venta? Esta acción no se puede deshacer.');">
+                    <input type="hidden" th:if="${_csrf != null}"
+                           th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="sf-btn sf-btn-danger">Eliminar</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+
+            <tr th:if="${items == null or #lists.isEmpty(items)}">
+              <td colspan="5" class="py-8 text-center text-gray-500">
+                No hay ventas para los filtros seleccionados.
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div th:if="${error}" class="sf-alert sf-alert-error mt-4" th:text="${error}"></div>
+    </div><!-- /.page -->
+
+  </div><!-- /.wrapper -->
+</body>
+</html>

@@ -1,150 +1,317 @@
-/* =========================
-   SoftFruver – Design Tokens
-   ========================= */
+/* =========================================================
+   SoftFruver — app.css (UI consistente y centrada)
+   ========================================================= */
+
+/* ========== Reset mínimo + fuente ========== */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans",
+    "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  color: #1f2937; /* gray-800 */
+  background:
+    linear-gradient(135deg, rgba(0,0,0,.03) 25%, rgba(0,0,0,0) 25%) 0 0/28px 28px,
+    linear-gradient(135deg, rgba(0,0,0,.03) 25%, rgba(0,0,0,0) 25%) 14px 14px/28px 28px,
+    #f3f7f4; /* patrón diagonal suave */
+}
+
+/* ========== Variables de tema ========== */
 :root{
-  --brand-50:#f4f7ff;
-  --brand-100:#e8eeff;
-  --brand-200:#cfdcff;
-  --brand-300:#a8c0ff;
-  --brand-400:#7ea1ff;
-  --brand-500:#556dff;    /* color principal (botones primarios) */
-  --brand-600:#3f53d6;
-  --brand-700:#2f3da6;
+  --brand-50:#f0fff0;
+  --brand-100:#dbf8d9;
+  --brand-200:#bdf0b7;
+  --brand-300:#94e08a;
+  --brand-400:#6fd262;
+  --brand-500:#4cc443;   /* principal */
+  --brand-600:#36a735;
+  --brand-700:#2a872c;
+  --brand-800:#236c25;
+  --brand-900:#1d581f;
 
-  --gray-50:#f9fafb;
-  --gray-100:#f3f4f6;
-  --gray-200:#e5e7eb;
-  --gray-300:#d1d5db;
-  --gray-400:#9ca3af;
-  --gray-500:#6b7280;
-  --gray-600:#4b5563;
-  --gray-700:#374151;
-  --gray-800:#1f2937;
-  --gray-900:#111827;
+  --accent:#ffd54a;      /* amarillo para botones destacados */
+  --danger:#ef4444;
+  --muted:#6b7280;       /* gray-500 */
 
-  --success-50:#ecfdf5;
-  --success-200:#a7f3d0;
-  --success-600:#059669;
+  --radius:16px;
+  --shadow: 0 6px 16px rgba(0,0,0,.08);
 
-  --danger-50:#fef2f2;
-  --danger-200:#fecaca;
-  --danger-600:#dc2626;
-
-  --radius-xl: 0.75rem;      /* ~rounded-xl */
-  --radius-2xl: 1rem;        /* ~rounded-2xl */
-  --shadow-sm: 0 1px 2px rgba(0,0,0,.06);
-  --shadow-md: 0 6px 20px rgba(17,24,39,.06);
-
-  --ring: 0 0 0 .25rem rgba(85, 109, 255, .25); /* focus */
+  --sidebar-w: 260px;    /* ancho fijo de la barra lateral */
+  --page-max: 1200px;    /* ancho máximo del contenido */
 }
 
-/* ================ 
-   Resets mínimos
-   ================ */
-* { box-sizing:border-box; }
-html, body { height:100%; }
-body { color: var(--gray-900); background: #f6f7fb; }
+/* =========================================================
+   LAYOUT: Sidebar fija + contenido centrado
+   ========================================================= */
 
-/* ======================================
-   Utilidades SoftFruver (prefijo sf-)
-   ====================================== */
+/* Sidebar fija pegada al borde izquierdo */
+.sidebar-fixed{
+  position: fixed;
+  inset: 0 auto 0 0;            /* top:0; left:0; bottom:0 */
+  width: var(--sidebar-w);
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background: linear-gradient(180deg, #e8f9ed, #d6f4de 55%, #c9efd3);
+  border-right: 1px solid rgba(0,0,0,.05);
+  box-shadow: inset -1px 0 0 rgba(0,0,0,.04);
+  z-index: 30;
+}
 
-/* Tarjetas / contenedores */
+/* Cabecera de la marca dentro del sidebar */
+.sidebar-fixed .brand{
+  display:flex; align-items:center; gap:10px;
+  padding:10px 10px 14px; border-bottom:1px solid rgba(0,0,0,.08);
+  margin-bottom:10px;
+}
+.sidebar-fixed .brand .logo{
+  width:38px; height:38px; border-radius:10px; background:#fff; display:grid; place-items:center;
+  box-shadow: 0 3px 9px rgba(0,0,0,.08);
+}
+.sidebar-fixed .brand .brand-title{ font-weight:800; color:#134e19 }
+.sidebar-fixed .brand .brand-sub  { font-size:12px; color:#13531c; opacity:.75 }
+
+/* Navegación sidebar */
+.sidebar-fixed nav { margin-top: 8px; display:flex; flex-direction:column; gap:8px; }
+.nav-link, .sf-navlink{   /* soporta ambas clases por compatibilidad */
+  display:flex; align-items:center; gap:10px;
+  padding:12px 12px;
+  border-radius: 12px;
+  color:#09360e; text-decoration:none;
+  transition: transform .05s ease, background .15s ease, outline-color .15s ease;
+  background: #e9f6eb;
+  border: 1px solid #d4ead7;
+}
+.nav-link .icon, .sf-navlink .icon{ width:20px; text-align:center; opacity:.85; }
+.nav-link:hover, .sf-navlink:hover{ background:#d9f0dd; }
+.nav-link.is-active, .sf-navlink.active{
+  background:#cbeacc;
+  outline: 2px solid #a6dfa0;
+  font-weight: 600;
+}
+
+/* Empujar el contenido a la derecha para no quedar debajo del sidebar */
+.wrapper{
+  margin-left: var(--sidebar-w);
+  padding: 16px 24px;
+  min-height: 100dvh;
+}
+
+/* Banda superior (topbar) centrada y con el mismo ancho que la página */
+.header-band{
+  max-width: var(--page-max);
+  margin: 0 auto 16px;
+}
+
+/* Contenedor de página centrado */
+.page{
+  max-width: var(--page-max);
+  margin: 0 auto;
+}
+
+/* =========================================================
+   TOPBAR (fragmento barra_superior)
+   ========================================================= */
+.topbar{
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, #c6f6d5, #b7efc5 60%, #a8e7b5);
+  box-shadow: var(--shadow);
+  padding: 12px 16px;
+  display:flex; align-items:center; justify-content:space-between; gap: 12px;
+}
+.topbar .left{ display:flex; align-items:center; gap:10px; }
+.topbar .title{
+  font-size: clamp(20px, 2.2vw, 28px);
+  font-weight: 800;
+  color:#134e19;
+  line-height: 1.1;
+}
+.topbar .subtitle{ color:#134e19; opacity:.8; font-size:13px; }
+
+.role-pill{
+  display:inline-flex; align-items:center; gap:8px;
+  background:#fff; color:#134e19; border:1px solid #cfe3d1;
+  padding:6px 10px; border-radius: 999px; font-size:13px;
+}
+
+/* =========================================================
+   TARJETAS / CONTROLES / TABLAS
+   ========================================================= */
 .sf-card{
-  background:#fff;
-  border:1px solid var(--gray-200);
-  border-radius: var(--radius-2xl);
-  padding: 1rem;
-  box-shadow: var(--shadow-sm);
+  background:#fff; border-radius: var(--radius); box-shadow: var(--shadow);
 }
 
-/* Botones base */
+/* Cabecera de página (título + CTA) */
+.page-head{
+  display:flex; align-items:center; justify-content:space-between; gap: 12px;
+  margin: 6px 0 4px;
+}
+
+/* Botones */
 .sf-btn{
-  display:inline-flex; align-items:center; justify-content:center;
-  gap:.5rem;
-  border-radius: var(--radius-xl);
-  padding:.5rem .75rem;
-  font-size:.875rem; line-height:1.25rem;
-  border:1px solid var(--gray-200);
-  background:#fff; color:var(--gray-900);
-  transition: box-shadow .15s ease, background .15s ease, border-color .15s ease;
-  text-decoration:none;
+  display:inline-flex; align-items:center; gap:8px;
+  background:#fff; color:#134e19; border:1px solid #cfe3d1;
+  padding:8px 12px; border-radius:12px; text-decoration:none; cursor:pointer;
+  font-weight: 500;
 }
-.sf-btn:hover{ background: var(--gray-100); }
-.sf-btn:focus{ outline:none; box-shadow: var(--ring); }
-
-/* Variantes */
+.sf-btn:hover{ background:#f9fffa; }
 .sf-btn-primary{
-  background: var(--brand-500);
-  color:#fff;
-  border-color: transparent;
+  background: var(--accent); border-color:#f4c534; color:#1f2937; font-weight:600;
 }
-.sf-btn-primary:hover{ background: var(--brand-600); }
-.sf-btn-primary:focus{ box-shadow: 0 0 0 .25rem rgba(85,109,255,.35); }
-
-.sf-btn-ghost{
-  background:#fff;
-  color:var(--gray-900);
-  border-color: var(--gray-300);
-}
-.sf-btn-ghost:hover{ background:#fff; border-color: var(--gray-400); }
-
-/* Acciones pequeñas (tabla) */
-.sf-action{
-  display:inline-flex; align-items:center; justify-content:center;
-  padding:.375rem .625rem; font-size:.75rem;
-  border-radius: var(--radius-xl);
-  background:#fff; border:1px solid var(--gray-200);
-}
-.sf-action:hover{ background: var(--gray-100); }
+.sf-btn-danger{ background: var(--danger); color:#fff; border-color: transparent; }
+.sf-btn-ghost{ background:transparent; border-color:transparent; color:var(--muted); }
 
 /* Inputs */
-.sf-input{
-  width:100%;
-  border:1px solid var(--gray-300);
-  border-radius: var(--radius-xl);
-  padding:.5rem .75rem;
-  font-size:.875rem;
-  background:#fff;
+.sf-input, .sf-select{
+  width:100%; border:1px solid #d1d5db; padding:9px 10px; border-radius:12px; background:#fff;
 }
-.sf-input:focus{ outline:none; box-shadow: var(--ring); border-color: var(--brand-500); }
+.sf-label{ display:block; font-size:12px; color:var(--muted); margin-bottom:6px; }
+.sf-checkbox{ width:18px; height:18px; accent-color: var(--brand-600); }
 
-/* Tabla básica */
+/* Tabla */
+.card-table{ overflow: hidden; }
+.sf-table { width:100%; border-collapse:separate; border-spacing:0; }
 .sf-table thead th{
-  background: var(--gray-50);
-  font-weight:600;
+  font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted);
+  background:#f9fafb;
+  padding:10px 14px; border-bottom:1px solid #e5e7eb;
+  white-space: nowrap;
 }
-.sf-table th, .sf-table td{
-  padding:.5rem 1rem;
-  border-top:1px solid var(--gray-200);
+.sf-table tbody td{ padding:10px 14px; border-bottom:1px solid #eef2f7; vertical-align: middle; }
+.sf-table tr:hover td{ background:#fcfffd; }
+
+/* Columnas con ancho reservado (evita saltos por botones) */
+.col-products{ width: 38%; }
+.col-actions{ width: 190px; }
+
+/* Acciones dentro de la tabla */
+.table-actions{
+  display:flex; justify-content:flex-end; gap:8px; align-items:center;
 }
 
 /* Alertas */
-.sf-alert{
-  border-radius: var(--radius-xl);
-  padding:.5rem .75rem;
-  font-size:.875rem;
-  border:1px solid;
-}
-.sf-alert-success{
-  background: var(--success-50);
-  border-color: var(--success-200);
-  color: var(--success-600);
-}
-.sf-alert-danger{
-  background: var(--danger-50);
-  border-color: var(--danger-200);
-  color: var(--danger-600);
+.sf-alert{ border-radius:12px; padding:10px 12px; }
+.sf-alert-error{ background:#fee2e2; color:#991b1b; }
+
+/* =========================================================
+   UTILIDADES PEQUEÑAS (compatibilidad con tus plantillas)
+   ========================================================= */
+.text-right{ text-align:right; }
+.text-xs{ font-size:12px; }
+.text-sm{ font-size:14px; }
+.font-semibold{ font-weight:600; }
+.font-medium{ font-weight:500; }
+.mt-1{ margin-top:4px; }
+.mt-4{ margin-top:16px; }
+.mb-2{ margin-bottom:8px; }
+.gap-2{ gap:8px; }
+.gap-3{ gap:12px; }
+.p-0{ padding:0; }
+.p-3{ padding:12px; }
+.p-4{ padding:16px; }
+.p-5{ padding:20px; }
+
+/* Botón salir al fondo del sidebar si lo usas dentro del nav */
+.sidebar-fixed .spacer{ flex:1; }
+.sidebar-fixed .logout{ margin-top: 6px; }
+
+/* ===== Página de login ===== */
+.auth-page{
+  min-height:100dvh;
+  margin:0;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  /* mismo patrón del resto de la app */
+  background:
+    repeating-linear-gradient(135deg, rgba(0,0,0,.03) 0 14px, rgba(0,0,0,0) 14px 28px),
+    linear-gradient(180deg, #f0fff4, #e9fbe9 50%, #e6f7e6);
 }
 
-/* Topbar / Sidebar (si deseas aplicarlas luego) */
-.sf-topbar{
-  background:#fff; border-bottom:1px solid var(--gray-200);
-}
-.sf-sidebar{
-  background:#fff; border:1px solid var(--gray-200);
-  border-radius: var(--radius-2xl);
+/* Tarjeta compacta y centrada */
+.auth-card{
+  width:min(92vw, 420px);
+  padding:28px 28px 22px;
+  text-align:center;
 }
 
-/* Helpers */
-.sf-spacer{ flex:1 1 auto; }
+/* Marca arriba (usa tu favicon, tamaño controlado) */
+.brand-mark{
+  width:56px; height:56px; margin:0 auto 8px;
+  border-radius:14px; background:#fff; display:grid; place-items:center;
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+  overflow:hidden;
+}
+.brand-mark img{
+  width:40px; height:40px; object-fit:contain; display:block;
+}
+
+/* Títulos */
+.auth-title{
+  margin:2px 0 2px;
+  font-size:22px; font-weight:800; color:#134e19;
+}
+.auth-subtitle{
+  margin:0 0 14px;
+  font-size:13px; color:#46644a;
+}
+
+/* Formulario */
+.auth-form{
+  display:grid; gap:12px; text-align:left; margin-top:10px;
+}
+
+/* Mensajes/ayudas */
+.auth-alert{ margin:10px 0 0; text-align:left; }
+.auth-help{
+  margin-top:6px; font-size:12px; color:#6b7280;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.auth-captcha-q{ font-size:13px; color:#374151; font-weight:600; }
+.auth-link{ color:#2563eb; text-decoration:none; }
+.auth-link:hover{ text-decoration:underline; }
+
+/* Pie */
+.auth-footer{
+  margin-top:14px; font-size:11px; color:#6b7280;
+}
+
+/* Variantes de alertas (extienden tu .sf-alert base) */
+.sf-alert-success{ background:#dcfce7; color:#166534; }
+.sf-alert-warning{ background:#fef9c3; color:#854d0e; }
+.sf-alert-info   { background:#dbeafe; color:#1e40af; }
+
+/* === Centrar solo el contenido de la columna derecha (sin afectar sidebar) === */
+.content-center{
+  max-width: 1100px;   /* ancho cómodo para detalle/formularios */
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Opcional: mejora legibilidad de tablas cuando hay textos largos */
+@media (max-width: 1024px){
+  .sf-table td, .sf-table th{
+    white-space: nowrap;
+  }
+}
+
+/* Centrar SOLO la columna derecha, sin afectar la sidebar ni .container */
+.right-col-center{
+  /* en móviles no cambiamos nada */
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media (min-width: 768px){
+  .right-col-center{
+    display: flex;              /* activa flex en la columna derecha */
+    justify-content: center;    /* centra horizontalmente lo de adentro */
+  }
+}
+
+/* Caja interior con ancho máximo “cómodo” */
+.right-col-inner{
+  width: 100%;
+  max-width: 1100px;            /* ajusta si lo quieres más estrecho/ancho */
+}

@@ -1,17 +1,24 @@
 <th:block th:fragment="barra_superior">
-  <div class="bg-white border-b">
-    <div class="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <img src="/imagenes/logo.svg" alt="SoftFruver" class="h-6 w-6" />
-        <span class="text-lg font-semibold text-gray-900">SoftFruver</span>
+  <div class="header-band">
+    <header class="topbar">
+      <!-- Izquierda: logo + títulos -->
+      <div class="left">
+        <div class="logo brand-mark" style="width:40px;height:40px;border-radius:10px;overflow:hidden;">
+          <img th:src="@{/iconos/favicon.jpeg}" alt="Logo" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div>
+          <div class="title">SoftFruver</div>
+          <div class="subtitle">Operación diaria</div>
+        </div>
       </div>
 
-      <div class="text-sm text-gray-600">
-        <span>Usuario: </span><span class="font-medium" sec:authentication="name"></span>
-        <span class="mx-2">·</span>
-        <span>Rol: </span><span class="font-medium" sec:authentication="principal.authorities"></span>
-        <a href="/logout" class="ml-4 text-indigo-600 hover:underline">Salir</a>
+      <!-- Derecha: usuario y rol -->
+      <div class="role-pill">
+        <span th:text="${#authentication?.name}">usuario</span>
+        <span>•</span>
+        <span sec:authorize="hasRole('ADMIN')">ADMIN</span>
+        <span sec:authorize="hasRole('SECRETARIA')">SECRETARIA</span>
       </div>
-    </div>
+    </header>
   </div>
 </th:block>

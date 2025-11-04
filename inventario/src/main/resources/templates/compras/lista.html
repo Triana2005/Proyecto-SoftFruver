@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security6">
+<head th:replace="~{fragmentos/_head :: head('Compras')}"></head>
+<body>
+
+  <!-- Sidebar fija -->
+  <div th:replace="~{fragmentos/_barra_lateral :: barra_lateral}"></div>
+
+  <!-- Contenido desplazado por sidebar y centrado -->
+  <div class="wrapper">
+    <!-- Topbar centrado al mismo ancho que la página -->
+    <div class="header-band" th:replace="~{fragmentos/_barra_superior :: barra_superior}"></div>
+
+    <!-- Página -->
+    <main class="page">
+      <!-- Cabecera (título + CTA) -->
+      <div class="page-head">
+        <h1 class="text-xl md:text-2xl font-semibold">Compras</h1>
+        <a class="sf-btn sf-btn-primary" th:href="@{/compras/nueva}">Nueva compra</a>
+      </div>
+      <p class="text-sm text-gray-500 mt-1">Listado de compras registradas</p>
+
+      <!-- Filtros -->
+      <section class="sf-card p-4 md:p-5 mt-4">
+        <form class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end" th:action="@{/compras}" method="get">
+          <!-- Buscar proveedor con datalist -->
+          <div class="md:col-span-6">
+            <label class="sf-label" for="q">Buscar (proveedor)</label>
+            <input id="q" name="q" type="text" class="sf-input w-full"
+                   placeholder="Ej. 'Frutas ACME'"
+                   list="dl-proveedores" autocomplete="off"
+                   th:value="${q}">
+            <datalist id="dl-proveedores">
+              <option th:each="p : ${proveedores}" th:value="${p.nombre}">Proveedor</option>
+            </datalist>
+            <p class="text-xs text-gray-400 mt-1">Puedes escribir o seleccionar de la lista.</p>
+          </div>
+
+          <!-- Desde -->
+          <div class="md:col-span-3">
+            <label class="sf-label" for="desde">Desde</label>
+            <input id="desde" name="desde" type="date" class="sf-input w-full"
+                   th:value="${desde}">
+          </div>
+
+          <!-- Hasta -->
+          <div class="md:col-span-3">
+            <label class="sf-label" for="hasta">Hasta</label>
+            <input id="hasta" name="hasta" type="date" class="sf-input w-full"
+                   th:value="${hasta}">
+          </div>
+
+          <!-- Botones -->
+          <div class="md:col-span-12 flex gap-2">
+            <button type="submit" class="sf-btn sf-btn-primary">Aplicar</button>
+            <a class="sf-btn sf-btn-ghost" th:href="@{/compras}">Limpiar</a>
+          </div>
+        </form>
+      </section>
+
+      <!-- Tabla -->
+      <section class="sf-card p-0 mt-4 card-table">
+        <div class="overflow-x-auto">
+          <table class="sf-table w-full">
+            <thead>
+              <tr>
+                <th class="text-left">Fecha</th>
+                <th class="text-left">Proveedor</th>
+                <th class="text-right col-products">Productos</th>
+                <th class="text-right">Total</th>
+                <th class="text-right col-actions">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="it : ${items}">
+                <!-- Fecha → link a detalle -->
+                <td>
+                  <a class="sf-link" th:href="@{|/compras/${it.id}|}"
+                     th:text="${it.fecha != null ? #temporals.format(it.fecha, 'dd/MM/yyyy') : ''}">
+                    01/10/2025
+                  </a>
+                </td>
+
+                <!-- Proveedor -->
+                <td th:text="${it.proveedor}">Proveedor</td>
+
+                <!-- Productos (resumen) -->
+                <td class="text-right" th:text="${it.productos != null ? it.productos : '—'}">—</td>
+
+                <!-- Total -->
+                <td class="text-right"
+                    th:text="${it.total != null ? #numbers.formatDecimal(it.total, 0, 'COMMA', 2, 'POINT') : '0,00'}">
+                  0,00
+                </td>
+
+                <!-- Acciones -->
+                <td class="text-right">
+                  <div class="table-actions">
+                    <a class="sf-btn sf-btn-ghost" th:href="@{|/compras/${it.id}|}">Ver</a>
+                    <a class="sf-btn sf-btn-primary" th:href="@{|/compras/${it.id}/editar|}">Editar</a>
+                    <form th:action="@{|/compras/${it.id}/eliminar|}" method="post"
+                          th:onsubmit="|return confirm('¿Eliminar compra #${it.id}? Esta acción no se puede deshacer.');|">
+                      <input type="hidden" th:if="${_csrf != null}"
+                             th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                      <button type="submit" class="sf-btn sf-btn-danger">Eliminar</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+
+              <tr th:if="${items == null or #lists.isEmpty(items)}">
+                <td colspan="5" class="py-8 text-center text-gray-500">
+                  No hay compras para los filtros seleccionados.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div th:if="${error}" class="sf-alert sf-alert-error mt-4" th:text="${error}"></div>
+    </main>
+  </div>
+</body>
+</html>

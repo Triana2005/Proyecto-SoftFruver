@@ -1,43 +1,56 @@
 <!doctype html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{diseño/base}">
-<head>
-  <title>Editar usuario</title>
-</head>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/_head :: head('Editar usuario')}"></head>
 <body>
-<section layout:fragment="contenido" class="space-y-6">
 
-  <div class="flex items-center justify-between">
-    <h1 class="text-2xl font-semibold text-gray-900">Editar usuario</h1>
-    <a th:href="@{/config}" class="sf-btn sf-btn-light">Volver</a>
+  <!-- Sidebar fija -->
+  <aside class="sidebar-fixed" th:replace="~{fragmentos/_barra_lateral :: barra_lateral}"></aside>
+
+  <!-- Contenido desplazado por sidebar -->
+  <div class="wrapper">
+
+    <!-- Topbar centrada -->
+    <div class="header-band" th:replace="~{fragmentos/_barra_superior :: barra_superior}"></div>
+
+    <!-- Página centrada -->
+    <main class="page">
+      <section class="w-full max-w-[800px] mx-auto space-y-4">
+
+        <div class="flex items-center justify-between">
+          <h1 class="text-2xl font-semibold text-gray-900">Editar usuario</h1>
+          <a th:href="@{/config}" class="sf-btn">Volver</a>
+        </div>
+
+        <div th:if="${ok}"  class="sf-alert sf-alert-success" th:text="${ok}">ok</div>
+        <div th:if="${err}" class="sf-alert sf-alert-error"   th:text="${err}">err</div>
+
+        <div class="sf-card p-4">
+          <form th:action="@{|/config/usuarios/${usuario.id}/actualizar|}" method="post" class="space-y-4">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+            <div>
+              <label class="sf-label">Usuario</label>
+              <input type="text" name="username" required minlength="3"
+                     th:value="${usuario.username}" class="sf-input w-full">
+            </div>
+
+            <div>
+              <label class="sf-label">Nueva contraseña</label>
+              <input type="password" name="nuevaPassword" minlength="6" class="sf-input w-full"
+                     placeholder="(dejar vacío para no cambiar)">
+              <p class="text-xs text-gray-500 mt-1">Déjalo vacío si no deseas cambiarla.</p>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button type="submit" class="sf-btn sf-btn-primary">Guardar cambios</button>
+              <a th:href="@{/config}" class="sf-btn">Cancelar</a>
+            </div>
+          </form>
+        </div>
+
+      </section>
+    </main>
   </div>
-
-  <div th:if="${ok}"  class="sf-alert sf-alert-success" th:text="${ok}">ok</div>
-  <div th:if="${err}" class="sf-alert sf-alert-danger"  th:text="${err}">err</div>
-
-  <div class="sf-card p-4 max-w-xl">
-    <form th:action="@{|/config/usuarios/${usuario.id}/actualizar|}" method="post" class="space-y-4">
-      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-
-      <div>
-        <label class="block text-sm text-gray-700 mb-1">Usuario</label>
-        <input type="text" name="username" required minlength="3"
-               th:value="${usuario.username}" class="sf-input w-full">
-      </div>
-
-      <div>
-        <label class="block text-sm text-gray-700 mb-1">Nueva contraseña</label>
-        <input type="password" name="nuevaPassword" minlength="6" class="sf-input w-full" placeholder="(dejar vacío para no cambiar)">
-        <p class="text-xs text-gray-500 mt-1">Déjalo vacío si no deseas cambiarla.</p>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <button type="submit" class="sf-btn sf-btn-primary">Guardar cambios</button>
-        <a th:href="@{/config}" class="sf-btn sf-btn-light">Cancelar</a>
-      </div>
-    </form>
-  </div>
-
-</section>
 </body>
 </html>

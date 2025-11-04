@@ -1,68 +1,72 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security6">
 <th:block th:fragment="barra_lateral">
-  <nav class="sf-card p-3 sticky top-4">
-    <ul class="space-y-1 text-sm">
-      <li>
-        <a href="/menu" class="sf-navlink"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/menu')} ? ' active'">
-          Menú
-        </a>
-      </li>
+  <aside class="sidebar-fixed">
+    <!-- Marca -->
+    <div class="brand">
+      <div class="logo">
+        <img th:src="@{/iconos/favicon.jpeg}" alt="Logo" width="80" height="80" loading="lazy">
+      </div>
+      <div class="appname">SoftFruver</div>
+    </div>
 
-      <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
-        <a href="/compras" class="sf-navlink"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/compras')} ? ' active'">
-          Compras
-        </a>
-      </li>
+    <!-- Navegación -->
+    <nav>
+      <a href="/menu" class="sf-navlink"
+         th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/menu')} ? ' active'">
+        <span class="nav-icon">🏠</span> <span>Menú</span>
+      </a>
 
-      <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
-        <a href="/ventas" class="sf-navlink"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/ventas')} ? ' active'">
-          Ventas
-        </a>
-      </li>
+      <a sec:authorize="hasAnyRole('ADMIN','SECRETARIA')" href="/compras" class="sf-navlink"
+         th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/compras')} ? ' active'">
+        <span class="nav-icon">🧾</span> <span>Compras</span>
+      </a>
 
-      <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
-        <a href="/pagos" class="sf-navlink"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/pagos')} ? ' active'">
-          Pagos
-        </a>
-      </li>
+      <a sec:authorize="hasAnyRole('ADMIN','SECRETARIA')" href="/ventas" class="sf-navlink"
+         th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/ventas')} ? ' active'">
+        <span class="nav-icon">🛒</span> <span>Ventas</span>
+      </a>
 
-      <li>
-        <a href="/inventario" class="sf-navlink"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/inventario')} ? ' active'">
-          Inventario
-        </a>
-      </li>
+      <a sec:authorize="hasAnyRole('ADMIN','SECRETARIA')" href="/pagos" class="sf-navlink"
+         th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/pagos')} ? ' active'">
+        <span class="nav-icon">💳</span> <span>Pagos</span>
+      </a>
 
-      <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
-        <a href="/reportes" class="sf-navlink"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/reportes')} ? ' active'">
-          Reportes
-        </a>
-      </li>
+      <a sec:authorize="hasAnyRole('ADMIN','SECRETARIA')" href="/inventario" class="sf-navlink"
+         th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/inventario')} ? ' active'">
+        <span class="nav-icon">📦</span> <span>Inventario</span>
+      </a>
 
-      <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
-        <a href="/proveedores" class="sf-navlink"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/proveedores')} ? ' active'">
-          Proveedores
-        </a>
-      </li>
+      <a sec:authorize="hasAnyRole('ADMIN','SECRETARIA')" href="/reportes" class="sf-navlink"
+         th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/reportes')} ? ' active'">
+        <span class="nav-icon">📊</span> <span>Reportes</span>
+      </a>
 
-      <li sec:authorize="hasAnyRole('ADMIN','SECRETARIA')">
-        <a href="/clientes" class="sf-navlink"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/clientes')} ? ' active'">
-          Clientes
-        </a>
-      </li>
+      <a sec:authorize="hasAnyRole('ADMIN','SECRETARIA')" href="/proveedores" class="sf-navlink"
+         th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/proveedores')} ? ' active'">
+        <span class="nav-icon">🚚</span> <span>Proveedores</span>
+      </a>
 
-      <li sec:authorize="hasRole('ADMIN')">
-        <a href="/config" class="sf-navlink"
-           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/config')} ? ' active'">
-          Configuración
-        </a>
-      </li>
-    </ul>
-  </nav>
+      <a sec:authorize="hasAnyRole('ADMIN','SECRETARIA')" href="/clientes" class="sf-navlink"
+         th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/clientes')} ? ' active'">
+        <span class="nav-icon">👥</span> <span>Clientes</span>
+      </a>
+
+      <a sec:authorize="hasRole('ADMIN')" href="/config" class="sf-navlink"
+         th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/config')} ? ' active'">
+        <span class="nav-icon">⚙️</span> <span>Configuración</span>
+      </a>
+    </nav>
+
+    <div class="spacer"></div>
+
+    <!-- Salir -->
+    <div class="logout">
+      <form th:action="@{/logout}" method="post">
+        <button type="submit" class="sf-btn" style="width:100%;">Salir</button>
+      </form>
+    </div>
+  </aside>
 </th:block>
+</html>
