@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security6">
+<head th:replace="~{fragmentos/_head :: head('Editar pago')}"></head>
+<body>
+  <aside class="sidebar-fixed" th:replace="~{fragmentos/_barra_lateral :: barra_lateral}"></aside>
+  <div class="wrapper">
+    <div class="header-band" th:replace="~{fragmentos/_barra_superior :: barra_superior}"></div>
+
+    <div class="page">
+      <section class="w-full max-w-[900px] mx-auto">
+        <div class="sf-card p-4 md:p-5 space-y-4">
+
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-gray-500">
+                <a class="sf-link" th:href="@{/pagos}">Pagos</a> ·
+                <a class="sf-link" th:href="@{|/pagos/${pagoId}|}" th:text="'Pago #'+${pagoId}">Pago</a> ·
+                <span>Editar</span>
+              </div>
+              <h1 class="text-xl font-semibold mt-1">Editar pago</h1>
+            </div>
+            <div class="flex gap-2">
+              <a th:href="@{|/pagos/${pagoId}|}" class="sf-btn">Cancelar</a>
+            </div>
+          </div>
+
+          <div th:if="${error}" class="sf-alert sf-alert-error" th:text="${error}"></div>
+
+          <form method="post" th:action="@{|/pagos/${pagoId}|}" class="space-y-4">
+            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <label class="sf-label">Tipo</label>
+                <select class="sf-input" name="tipo" required>
+                  <option value="CLIENTE" th:selected="${cab.tipo == 'CLIENTE'}">Cliente</option>
+                  <option value="PROVEEDOR" th:selected="${cab.tipo == 'PROVEEDOR'}">Proveedor</option>
+                </select>
+              </div>
+              <div>
+                <label class="sf-label">Fecha</label>
+                <input class="sf-input" type="date" name="fecha"
+                       th:value="${#temporals.format(cab.fecha, 'yyyy-MM-dd')}" required>
+              </div>
+              <div>
+                <label class="sf-label">Monto</label>
+                <input class="sf-input text-right" type="number" name="monto" step="0.01" min="0.01"
+                       th:value="${cab.monto}" required>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="sf-label">Cliente</label>
+                <select class="sf-input" name="refId"
+                        th:disabled="${cab.tipo != 'CLIENTE'}" required>
+                  <option value="" disabled>Seleccione...</option>
+                  <option th:each="c : ${clientes}"
+                          th:value="${c.id}"
+                          th:selected="${cab.tipo == 'CLIENTE' and cab.refId == c.id}"
+                          th:text="${c.nombre}">
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label class="sf-label">Proveedor</label>
+                <select class="sf-input" name="refId"
+                        th:disabled="${cab.tipo != 'PROVEEDOR'}">
+                  <option value="" disabled>Seleccione...</option>
+                  <option th:each="p : ${proveedores}"
+                          th:value="${p.id}"
+                          th:selected="${cab.tipo == 'PROVEEDOR' and cab.refId == p.id}"
+                          th:text="${p.nombre}">
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="sf-label">Método</label>
+                <select class="sf-input" name="metodo" required>
+                  <option value="EFECTIVO" th:selected="${cab.metodo == 'EFECTIVO'}">Efectivo</option>
+                  <option value="TRANSFERENCIA" th:selected="${cab.metodo == 'TRANSFERENCIA'}">Transferencia</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex gap-2">
+              <button type="submit" class="sf-btn sf-btn-primary">Guardar cambios</button>
+              <a th:href="@{|/pagos/${pagoId}|}" class="sf-btn">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

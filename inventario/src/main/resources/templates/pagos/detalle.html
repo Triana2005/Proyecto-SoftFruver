@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security6">
+<head th:replace="~{fragmentos/_head :: head('Detalle de pago')}"></head>
+<body>
+  <aside class="sidebar-fixed" th:replace="~{fragmentos/_barra_lateral :: barra_lateral}"></aside>
+  <div class="wrapper">
+    <div class="header-band" th:replace="~{fragmentos/_barra_superior :: barra_superior}"></div>
+
+    <div class="page">
+      <section class="w-full max-w-[900px] mx-auto">
+        <div class="sf-card p-4 md:p-5 space-y-4">
+
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-gray-500">
+                <a class="sf-link" th:href="@{/pagos}">Pagos</a> ·
+                <span th:text="'Pago #'+${cab.id}">Pago</span>
+              </div>
+              <h1 class="text-xl font-semibold mt-1">Detalle de pago</h1>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <a th:href="@{/pagos}" class="sf-btn">Volver</a>
+              <a class="sf-btn sf-btn-primary" th:href="@{|/pagos/${cab.id}/editar|}">Editar</a>
+              <form th:action="@{|/pagos/${cab.id}/eliminar|}" method="post"
+                    onsubmit="return confirm('¿Eliminar pago? Esta acción no se puede deshacer.');">
+                <input type="hidden" th:if="${_csrf != null}"
+                       th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit" class="sf-btn sf-btn-danger">Eliminar</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div class="sf-card p-3">
+              <div class="text-xs text-gray-500">Tipo</div>
+              <div class="font-medium" th:text="${cab.tipo}">CLIENTE</div>
+            </div>
+            <div class="sf-card p-3">
+              <div class="text-xs text-gray-500">Fecha</div>
+              <div class="font-medium" th:text="${cab.fecha}">2025-01-01</div>
+            </div>
+            <div class="sf-card p-3">
+              <div class="text-xs text-gray-500">Ref.</div>
+              <div class="font-medium" th:text="${cab.refNombre}">Nombre</div>
+            </div>
+            <div class="sf-card p-3 text-right">
+              <div class="text-xs text-gray-500">Monto</div>
+              <div class="font-semibold text-lg"
+                   th:text="${#numbers.formatDecimal(cab.monto,0,'COMMA',2,'POINT')}">0,00</div>
+            </div>
+          </div>
+
+          <div class="sf-card p-3">
+            <div class="text-xs text-gray-500">Método</div>
+            <div class="font-medium" th:text="${cab.metodo}">EFECTIVO</div>
+          </div>
+
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

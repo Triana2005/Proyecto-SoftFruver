@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security6">
+<head th:replace="~{fragmentos/_head :: head('Registrar pago')}"></head>
+<body>
+  <aside class="sidebar-fixed" th:replace="~{fragmentos/_barra_lateral :: barra_lateral}"></aside>
+
+  <div class="wrapper">
+    <div class="header-band" th:replace="~{fragmentos/_barra_superior :: barra_superior}"></div>
+
+    <main class="page">
+      <section class="w-full max-w-[900px] mx-auto">
+        <div class="sf-card p-4 md:p-5 space-y-4">
+
+          <div class="page-head">
+            <div>
+              <div class="text-xs text-gray-500">
+                <a class="sf-link" th:href="@{/pagos}">Pagos</a> · <span>Nuevo</span>
+              </div>
+              <h1 class="text-xl font-semibold mt-1">Registrar pago</h1>
+            </div>
+            <a th:href="@{/pagos}" class="sf-btn">Volver</a>
+          </div>
+
+          <div th:if="${error}" class="sf-alert sf-alert-error" th:text="${error}"></div>
+
+          <form method="post" th:action="@{/pagos}" class="space-y-4" id="formPago">
+            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <!-- ID real que viaja al backend según el tipo seleccionado -->
+            <input type="hidden" name="refId" id="refId"/>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <label class="sf-label" for="tipo">Tipo</label>
+                <select class="sf-input" name="tipo" id="tipo" required>
+                  <option value="" disabled selected>Seleccione...</option>
+                  <option value="CLIENTE">Cliente</option>
+                  <option value="PROVEEDOR">Proveedor</option>
+                </select>
+              </div>
+              <div>
+                <label class="sf-label" for="fecha">Fecha</label>
+                <input class="sf-input" type="date" id="fecha" name="fecha" th:value="${hoy}" required>
+              </div>
+              <div>
+                <label class="sf-label" for="monto">Monto</label>
+                <input class="sf-input text-right" type="number" id="monto" name="monto" step="0.01" min="0.01" required>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="sf-label" for="selCliente">Cliente</label>
+                <!-- Sin name: NO se envía directamente -->
+                <select class="sf-input" id="selCliente" data-role="cliente" disabled>
+                  <option value="" selected>Seleccione...</option>
+                  <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nombre}"></option>
+                </select>
+                
+              </div>
+              <div>
+                <label class="sf-label" for="selProveedor">Proveedor</label>
+                <!-- Sin name: NO se envía directamente -->
+                <select class="sf-input" id="selProveedor" data-role="proveedor" disabled>
+                  <option value="" selected>Seleccione...</option>
+                  <option th:each="p : ${proveedores}" th:value="${p.id}" th:text="${p.nombre}"></option>
+                </select>
+                
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="sf-label" for="metodo">Método</label>
+                <select class="sf-input" id="metodo" name="metodo" required>
+                  <option value="" disabled selected>Seleccione...</option>
+                  <option value="EFECTIVO">Efectivo</option>
+                  <option value="TRANSFERENCIA">Transferencia</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex gap-2">
+              <button type="submit" class="sf-btn sf-btn-primary">Guardar</button>
+              <a th:href="@{/pagos}" class="sf-btn">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/pagos-form.js"></script>
+</body>
+</html>

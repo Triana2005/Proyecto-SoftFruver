@@ -1,19 +1,24 @@
 <!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security6">
 <head th:replace="~{fragmentos/_head :: head('Nueva compra')}"></head>
-<body class="bg-gray-50">
-<div class="container mx-auto p-4 md:p-6">
+<body>
 
-  <div th:replace="~{fragmentos/_barra_superior :: barra_superior}"></div>
+  <!-- Sidebar fijo -->
+  <aside th:replace="~{fragmentos/_barra_lateral :: barra_lateral}"></aside>
 
-  <div class="grid grid-cols-1 md:grid-cols-[240px,1fr] gap-6 mt-4">
-    <aside th:replace="~{fragmentos/_barra_lateral :: barra_lateral}"></aside>
+  <!-- Contenido que respeta el sidebar -->
+  <div class="wrapper">
 
-    <section>
+    <!-- Barra superior centrada -->
+    <div th:replace="~{fragmentos/_barra_superior :: barra_superior}"></div>
+
+    <!-- Página centrada con ancho controlado -->
+    <main class="page">
       <div class="sf-card p-4 md:p-5 space-y-4">
 
-        <div class="flex items-center justify-between">
+        <!-- Encabezado de página -->
+        <div class="page-head">
           <div>
             <div class="text-xs text-gray-500">
               <a class="sf-link" th:href="@{/compras}">Compras</a> ·
@@ -21,19 +26,24 @@
             </div>
             <h1 class="text-xl font-semibold mt-1">Registrar compra</h1>
           </div>
-          <a th:href="@{/compras}" class="sf-btn">Volver</a>
+          <div class="flex gap-2">
+            <a th:href="@{/compras}" class="sf-btn">Volver</a>
+          </div>
         </div>
 
+        <!-- Alertas -->
         <div th:if="${error}" class="sf-alert sf-alert-error" th:text="${error}"></div>
 
+        <!-- Formulario -->
         <form method="post" th:action="@{/compras}" class="space-y-4">
+          <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
-          <!-- Cabecera -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <!-- Cabecera: 2 columnas (proveedor / fecha) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label class="sf-label">Proveedor</label>
               <select class="sf-input" name="proveedorId" required>
-                <option value="" selected disabled>Seleccione...</option>
+                <option value="" disabled selected>Seleccione...</option>
                 <option th:each="p : ${proveedores}" th:value="${p.id}" th:text="${p.nombre}"></option>
               </select>
             </div>
@@ -43,91 +53,87 @@
             </div>
           </div>
 
-          <!-- Items -->
+          <!-- Ítems -->
           <div>
             <div class="flex items-center justify-between mb-2">
               <h2 class="font-semibold">Ítems</h2>
               <button type="button" class="sf-btn sf-btn-primary" id="agregarFila">Agregar ítem</button>
             </div>
 
-            <div class="overflow-x-auto">
-              <table class="sf-table w-full" id="tablaItems">
-                <thead>
-                <tr>
-                  <th class="text-left">Producto</th>
-                  <th class="text-right">Cantidad (kg)</th>
-                  <th class="text-right">Precio unit.</th>
-                  <th class="text-right">Subtotal</th>
-                  <th></th>
-                </tr>
-                </thead>
-                <tbody id="tbodyItems">
+            <div class="card-table">
+              <div class="overflow-x-auto">
+                <table class="sf-table w-full" id="tablaItems">
+                  <thead>
+                    <tr>
+                      <th class="text-left">Producto</th>
+                      <th class="text-right">Cantidad (kg)</th>
+                      <th class="text-right">Precio unit.</th>
+                      <th class="text-right">Subtotal</th>
+                      <th></th>
+                    </tr>
+                  </thead>
 
-                <!-- Fila inicial visible (funciona sin JS) -->
-                <tr class="fila-item">
-                  <td>
-                    <select class="sf-input" name="productoId" required>
-                      <option value="" selected disabled>Seleccione...</option>
-                      <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}"></option>
-                    </select>
-                  </td>
-                  <td>
-                    <input class="sf-input text-right" type="number" name="cantidadKg" step="0.001" min="0.001" required>
-                  </td>
-                  <td>
-                    <input class="sf-input text-right" type="number" name="precioUnit" step="0.01" min="0" required>
-                  </td>
-                  <td class="text-right subtotal">0.00</td>
-                  <td><button type="button" class="sf-btn btn-quitar">Quitar</button></td>
-                </tr>
+                  <tbody id="tbodyItems">
+                    <!-- Fila inicial visible (funciona sin JS) -->
+                    <tr class="fila-item">
+                      <td>
+                        <select class="sf-input" name="productoId" required>
+                          <option value="" disabled selected>Seleccione...</option>
+                          <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}"></option>
+                        </select>
+                      </td>
+                      <td>
+                        <input class="sf-input text-right" type="number" name="cantidadKg" step="0.001" min="0.001" required>
+                      </td>
+                      <td>
+                        <input class="sf-input text-right" type="number" name="precioUnit" step="0.01" min="0" required>
+                      </td>
+                      <td class="text-right subtotal">0.00</td>
+                      <td><button type="button" class="sf-btn btn-quitar">Quitar</button></td>
+                    </tr>
+                  </tbody>
 
-                </tbody>
-                <tfoot>
-                <tr>
-                  <td colspan="5" class="text-xs text-gray-500">
-                    * El total se calculará automáticamente en la base de datos.
-                  </td>
-                </tr>
-                </tfoot>
-              </table>
+                  <tfoot>
+                    <tr>
+                      <td colspan="5" class="text-xs text-gray-500">
+                        * El total se recalcula en la base de datos por triggers al guardar.
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
             </div>
           </div>
 
+          <!-- Acciones -->
           <div class="flex gap-2">
             <button type="submit" class="sf-btn sf-btn-primary">Guardar compra</button>
             <a th:href="@{/compras}" class="sf-btn">Cancelar</a>
           </div>
         </form>
       </div>
-    </section>
+    </main>
   </div>
-</div>
 
-<!-- Prototipos ocultos para clonado por JS -->
-<div class="hidden" id="prototipos">
-  <select id="protoSelectProducto">
-    <option value="" selected disabled>Seleccione...</option>
-    <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}"></option>
-  </select>
+  <!-- Prototipos ocultos para clonado por JS -->
+  <div class="hidden" id="prototipos">
+    <select id="protoSelectProducto">
+      <option value="" disabled selected>Seleccione...</option>
+      <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}"></option>
+    </select>
 
-  <table><tbody>
-  <tr id="protoFila" class="fila-item">
-    <td>
-      <!-- el select se clona desde #protoSelectProducto -->
-    </td>
-    <td>
-      <input class="sf-input text-right" type="number" name="cantidadKg" step="0.001" min="0.001" required>
-    </td>
-    <td>
-      <input class="sf-input text-right" type="number" name="precioUnit" step="0.01" min="0" required>
-    </td>
-    <td class="text-right subtotal">0.00</td>
-    <td><button type="button" class="sf-btn btn-quitar">Quitar</button></td>
-  </tr>
-  </tbody></table>
-</div>
+    <table><tbody>
+    <tr id="protoFila" class="fila-item">
+      <td><!-- el select se clona desde #protoSelectProducto --></td>
+      <td><input class="sf-input text-right" type="number" name="cantidadKg" step="0.001" min="0.001" required></td>
+      <td><input class="sf-input text-right" type="number" name="precioUnit" step="0.01" min="0" required></td>
+      <td class="text-right subtotal">0.00</td>
+      <td><button type="button" class="sf-btn btn-quitar">Quitar</button></td>
+    </tr>
+    </tbody></table>
+  </div>
 
-<!-- JS externo (evita problemas de CSP con scripts inline) -->
-<script src="/js/compra-form.js"></script>
+  <!-- JS externo (CSP friendly) -->
+  <script src="/js/compra-form.js"></script>
 </body>
 </html>

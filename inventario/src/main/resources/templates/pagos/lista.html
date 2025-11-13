@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security6">
+<head th:replace="~{fragmentos/_head :: head('Pagos')}"></head>
+<body>
+  <aside class="sidebar-fixed" th:replace="~{fragmentos/_barra_lateral :: barra_lateral}"></aside>
+  <div class="wrapper">
+    <div class="header-band" th:replace="~{fragmentos/_barra_superior :: barra_superior}"></div>
+
+    <div class="page">
+      <section class="flex justify-between items-center">
+        <h1 class="text-xl md:text-2xl font-semibold">Pagos</h1>
+        <a class="sf-btn sf-btn-primary" th:href="@{/pagos/nuevo}">Registrar pago</a>
+      </section>
+
+      <p class="text-sm text-gray-500 mt-1">Listado de pagos</p>
+
+      <div class="sf-card p-4 md:p-5 mt-4">
+        <form class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end" th:action="@{/pagos}" method="get">
+          <div class="md:col-span-6">
+            <label class="sf-label" for="q">Buscar (cliente/proveedor)</label>
+            <input id="q" name="q" type="text" class="sf-input w-full"
+                   placeholder="Ej. 'Cliente ACME' o 'Proveedor XYZ'"
+                   th:value="${q}">
+          </div>
+
+          <div class="md:col-span-3">
+            <label class="sf-label" for="tipo">Tipo</label>
+            <select id="tipo" name="tipo" class="sf-input w-full">
+              <option th:value="${null}" th:selected="${tipo == null}">Todos</option>
+              <option value="CLIENTE" th:selected="${tipo == 'CLIENTE'}">Cliente</option>
+              <option value="PROVEEDOR" th:selected="${tipo == 'PROVEEDOR'}">Proveedor</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-3">
+            <label class="sf-label" for="desde">Desde</label>
+            <input id="desde" name="desde" type="date" class="sf-input w-full" th:value="${desde}">
+          </div>
+
+          <div class="md:col-span-3">
+            <label class="sf-label" for="hasta">Hasta</label>
+            <input id="hasta" name="hasta" type="date" class="sf-input w-full" th:value="${hasta}">
+          </div>
+
+          <div class="md:col-span-12 flex gap-2">
+            <button type="submit" class="sf-btn sf-btn-primary">Aplicar</button>
+            <a class="sf-btn sf-btn-ghost" th:href="@{/pagos}">Limpiar</a>
+          </div>
+        </form>
+      </div>
+
+      <div class="sf-card p-0 mt-4 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="sf-table w-full">
+            <thead>
+            <tr>
+              <th class="text-left">Fecha</th>
+              <th class="text-left">Tipo</th>
+              <th class="text-left">Cliente/Proveedor</th>
+              <th class="text-right">Monto</th>
+              <th class="text-left">Método</th>
+              <th class="text-right">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="it : ${items}">
+              <td th:text="${it.fecha != null ? #temporals.format(it.fecha, 'dd/MM/yyyy') : ''}">01/10/2025</td>
+              <td th:text="${it.tipo}">CLIENTE</td>
+              <td th:text="${it.refNombre}">Nombre</td>
+              <td class="text-right"
+                  th:text="${it.monto != null ? #numbers.formatDecimal(it.monto, 0, 'COMMA', 2, 'POINT') : '0,00'}">0,00</td>
+              <td th:text="${it.metodo}">EFECTIVO</td>
+              <td class="text-right">
+                <div class="inline-flex gap-2">
+                  <a class="sf-btn sf-btn-ghost" th:href="@{|/pagos/${it.id}|}">Ver</a>
+                  <a class="sf-btn sf-btn-primary" th:href="@{|/pagos/${it.id}/editar|}">Editar</a>
+                  <form th:action="@{|/pagos/${it.id}/eliminar|}" method="post"
+                        onsubmit="return confirm('¿Eliminar pago? Esta acción no se puede deshacer.');">
+                    <input type="hidden" th:if="${_csrf != null}"
+                           th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="sf-btn sf-btn-danger">Eliminar</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+
+            <tr th:if="${items == null or #lists.isEmpty(items)}">
+              <td colspan="6" class="py-8 text-center text-gray-500">
+                No hay pagos para los filtros seleccionados.
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div th:if="${error}" class="sf-alert sf-alert-error mt-4" th:text="${error}"></div>
+    </div>
+  </div>
+</body>
+</html>

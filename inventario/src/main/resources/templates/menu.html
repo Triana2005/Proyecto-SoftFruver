@@ -19,21 +19,40 @@
 
       <!-- Resumen del día -->
       <section class="space-y-4">
-        <h2 class="text-xl font-semibold">Resumen del día</h2>
+        <h2 class="text-xl font-semibold">
+          Resumen del día
+        </h2>
 
         <!-- 3 columnas en pantallas grandes, se adapta sin dejar huecos -->
         <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
           <div class="sf-card p-4 text-center">
             <h3 class="font-medium mb-1">Ventas</h3>
-            <p class="text-2xl font-semibold" style="color:#2563eb;">0</p>
+            <p class="text-2xl font-semibold" style="color:#2563eb;"
+               th:text="${ventasCount}">0</p>
+            <p class="text-sm text-gray-500"
+               th:text="${'Total: $' + #numbers.formatDecimal(ventasTotal, 0, 'POINT', 2, 'COMMA')}">
+              Total: $0.00
+            </p>
           </div>
+
           <div class="sf-card p-4 text-center">
             <h3 class="font-medium mb-1">Compras</h3>
-            <p class="text-2xl font-semibold" style="color:#2563eb;">0</p>
+            <p class="text-2xl font-semibold" style="color:#2563eb;"
+               th:text="${comprasCount}">0</p>
+            <p class="text-sm text-gray-500"
+               th:text="${'Total: $' + #numbers.formatDecimal(comprasTotal, 0, 'POINT', 2, 'COMMA')}">
+              Total: $0.00
+            </p>
           </div>
+
           <div class="sf-card p-4 text-center">
             <h3 class="font-medium mb-1">Pagos</h3>
-            <p class="text-2xl font-semibold" style="color:#2563eb;">0</p>
+            <p class="text-2xl font-semibold" style="color:#2563eb;"
+               th:text="${pagosCount}">0</p>
+            <p class="text-sm text-gray-500"
+               th:text="${'Total: $' + #numbers.formatDecimal(pagosTotal, 0, 'POINT', 2, 'COMMA')}">
+              Total: $0.00
+            </p>
           </div>
         </div>
       </section>
